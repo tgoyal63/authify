@@ -1,4 +1,4 @@
-import { NGROK_AUTHTOKEN, NGROK_DOMAIN , PORT } from "../config";
+import { NGROK_AUTHTOKEN, NGROK_DOMAIN, PORT } from "../config";
 
 export default async () => {
 	const ngrok = await import("@ngrok/ngrok");
@@ -28,7 +28,7 @@ export default async () => {
 	}
 	if (ngrokURL) {
 		console.log(`\n[NGROK]Started on ${ngrokURL}\n`);
-        return ngrokURL;
+		return ngrokURL;
 	}
-    return "";
+	return "";
 };
