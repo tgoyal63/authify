@@ -1,0 +1,6 @@
+{
+  "watch": ["src", ".env"],
+  "ext": "js,ts,json",
+  "ignore": ["src/**/*.{spec,test}.ts"],
+  "exec": "cross-env SWCRC=true node --loader @swc-node/register/esm src/index.ts"
+}
