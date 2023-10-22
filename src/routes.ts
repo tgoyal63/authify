@@ -1,11 +1,16 @@
 import { Router } from "express";
 import {
-	oauthCallbackController,
+	callbackController,
 	loginController,
-} from "./controllers/oauth.controller";
+	sendOtpController,
+} from "./controllers/auth.controller";
+import { sendOtpValidator, callbackValidator } from "./inputValidators";
+import { validateRequest } from "zod-express-middleware";
+
 const router = Router();
 
-router.get("/callback", oauthCallbackController);
 router.get("/login", loginController);
+router.get("/callback", validateRequest(callbackValidator), callbackController);
+router.post("/send-otp", validateRequest(sendOtpValidator), sendOtpController);
 
 export default router;

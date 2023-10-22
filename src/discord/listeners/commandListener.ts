@@ -1,5 +1,5 @@
 import { Interaction } from "discord.js";
-import commands from "../../utils/command.utils";
+import commands from "../../utils/command.util";
 
 export default async (interaction: Interaction) => {
 	if (!interaction.isCommand()) return;

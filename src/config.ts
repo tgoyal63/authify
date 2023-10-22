@@ -3,10 +3,8 @@ dotenv.config();
 import ngrok from "./utils/ngrok.util";
 
 let ngrokURL: Promise<string>;
-if(process.env["NODE_ENV"] === "development")
-	ngrokURL = ngrok();
-else
-	ngrokURL = Promise.resolve("");
+if (process.env["NODE_ENV"] === "development") ngrokURL = ngrok();
+else ngrokURL = Promise.resolve("");
 
 export const TOKEN: string = process.env["TOKEN"] || "";
 export const OAUTH_URL: string = process.env["OAUTH_URL"] || "";
@@ -23,6 +21,10 @@ export const EMAIL_FROM: string =
 export const NGROK_DOMAIN: string | undefined = process.env["NGROK_DOMAIN"];
 export const NGROK_AUTHTOKEN: string | undefined =
 	process.env["NGROK_AUTHTOKEN"];
+
+export const Fast2SMS_API_KEY: string = process.env["Fast2SMS_API_KEY"] || "";
+export const OTP_SECRET = process.env["OTP_SECRET"] || "supersecretotpsecret";
+
 export async function DYNAMIC_REDIRECT_URI() {
 	if (process.env["NODE_ENV"] === "development")
 		return `${await ngrokURL}/callback`;
@@ -41,7 +43,9 @@ if (
 	!CLIENT_ID ||
 	!CLIENT_SECRET ||
 	!AWS_ACCESS_KEY_ID ||
-	!AWS_SECRET_ACCESS_KEY
+	!AWS_SECRET_ACCESS_KEY ||
+	!Fast2SMS_API_KEY ||
+	!OTP_SECRET
 ) {
 	throw new Error(
 		"One or more required environment variables are missing. Please add them to the .env file.",
