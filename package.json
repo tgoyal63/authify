@@ -23,9 +23,9 @@
     "typescript": "^5.2.2"
   },
   "scripts": {
-    "dev": "nodemon",
+    "dev": "env NODE_ENV=development nodemon",
     "build": "swc src -d build",
-    "start": "node --experimental-specifier-resolution=node build/index.js"
+    "start": "env NODE_ENV=production node --experimental-specifier-resolution=node build/index.js"
   },
   "dependencies": {
     "discord.js": "^14.13.0",
