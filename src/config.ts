@@ -1,7 +1,12 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import ngrok from "./utils/ngrok.util";
-const ngrokURL = ngrok();
+
+let ngrokURL: Promise<string>;
+if(process.env["NODE_ENV"] === "development")
+	ngrokURL = ngrok();
+else
+	ngrokURL = Promise.resolve("");
 
 export const TOKEN: string = process.env["TOKEN"] || "";
 export const OAUTH_URL: string = process.env["OAUTH_URL"] || "";
