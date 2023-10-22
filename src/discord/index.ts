@@ -1,10 +1,10 @@
 import { Client, GatewayIntentBits , Events} from 'discord.js';
 // import buttonListener from './listeners/buttonListener';
 // import modalListener from './listeners/modalListener';
-import config from '../config';
+import {getConfig} from '../config';
 import commandListener from '../discord/listeners/commandListener';
 
-const token = config.token;
+const token = getConfig().token;
 
 const client = new Client({ 
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates]

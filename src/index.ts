@@ -1,8 +1,9 @@
-import config from "./config";
+import {getConfig, setDynamicRedirectURI} from "./config";
 import express from "express";
 import {Request, Response} from "express";
 import dbConnect from "./utils/dbconn.util";
-import { loginToBot} from "./discord";
+import { loginToBot } from "./discord";
+import ngrok from "./utils/ngrok.util";
 
 const app = express();
 app.use(express.json());
@@ -12,9 +13,10 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 dbConnect().then(() => {
-    app.listen(config.port, () => {
-        console.log(`Server listening on port ${config.port}`);
+    app.listen(getConfig().port, () => {
+        console.log(`Server listening on port ${getConfig().port}`);
         loginToBot();
+        ngrok();
     }
     );
 })
