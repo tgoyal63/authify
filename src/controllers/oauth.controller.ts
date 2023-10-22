@@ -2,19 +2,13 @@ import { Request, Response } from "express";
 import DiscordOauth2 from "discord-oauth2";
 import { CLIENT_ID, CLIENT_SECRET, DYNAMIC_REDIRECT_URI } from "../config";
 
-let oauth: DiscordOauth2;
-
-const initOauth = async () => {
-	const redirectURI = await DYNAMIC_REDIRECT_URI();
-	oauth = new DiscordOauth2({
-		clientId: CLIENT_ID,
-		clientSecret: CLIENT_SECRET,
-		redirectUri: redirectURI,
-	});
-};
+const oauth = new DiscordOauth2({
+	clientId: CLIENT_ID,
+	clientSecret: CLIENT_SECRET,
+	redirectUri: await DYNAMIC_REDIRECT_URI(),
+});
 
 export const oauthCallbackController = async (req: Request, res: Response) => {
-	if (!oauth) await initOauth();
 	try {
 		if (!req.query["code"]) throw new Error("NoCodeProvided");
 		const token = await oauth.tokenRequest({
@@ -25,13 +19,14 @@ export const oauthCallbackController = async (req: Request, res: Response) => {
 		const user = await oauth.getUser(token.access_token);
 		res.send(user);
 	} catch (error) {
-		console.log(error);
-		res.send({ error });
+		if(error instanceof Error)
+			res.status(500).send(error.message);
+		else
+			res.status(500).send("An unknown error occurred.");
 	}
 };
 
 export const loginController = async (req: Request, res: Response) => {
-	if (!oauth) await initOauth();
 	const x = oauth.generateAuthUrl({
 		scope: ["identify", "email", "guilds.join"],
 		state: "state",
