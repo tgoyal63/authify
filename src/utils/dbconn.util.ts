@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-import { getConfig } from '../config';
+import { MONGO_URI } from '../config';
 
 async function dbConnect(): Promise<void> {
     try {
         mongoose.set('strictQuery', false);
-        await mongoose.connect(getConfig().mongoURI || '', {
+        await mongoose.connect(MONGO_URI || '', {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         } as mongoose.ConnectOptions);

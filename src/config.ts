@@ -1,66 +1,36 @@
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 dotenv.config();
+import ngrok from "./utils/ngrok.util";
+const ngrokURL = ngrok();
 
-interface Config {
-    token: string;
-    oAuthURL: string;
-    mongoURI: string;
-    port: number;
-    clientId: string;
-    clientSecret: string;
-    awsRegion: string;
-    awsAccessKeyId: string;
-    awsSecretAccessKey: string;
-    emailFrom: string;
-}
-
-interface DevConfig {
-    ngrokDomain?: string | undefined;
-    ngrokAuthToken?: string | undefined;
-    redirectURI?: string | undefined;
-}
-
-let dynamicRedirectURI: string  = process.env['REDIRECT_URI'] || (process.env['NGROK_DOMAIN'] ? `https://${process.env['NGROK_DOMAIN']}/callback`: '');
-
-const loadedConfig: Config = {
-    token: process.env['TOKEN'] || '',
-    oAuthURL: process.env['OAUTH_URL'] || '',
-    mongoURI: process.env['MONGO_URI'] || '',
-    port: parseInt(process.env['PORT'] || '5000', 10),
-    clientId: process.env['CLIENT_ID'] || '',
-    clientSecret: process.env['CLIENT_SECRET'] || '',
-    awsRegion: process.env['AWS_REGION'] || 'ap-south-1',
-    awsAccessKeyId: process.env['AWS_ACCESS_KEY_ID'] || '',
-    awsSecretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'] || '',
-    emailFrom: process.env['EMAIL_FROM'] || 'no-reply@discordbot.tech',
+export const TOKEN: string = process.env["TOKEN"] || "";
+export const OAUTH_URL: string = process.env["OAUTH_URL"] || "";
+export const MONGO_URI: string = process.env["MONGO_URI"] || "";
+export const PORT: number = parseInt(process.env["PORT"] || "5000", 10);
+export const CLIENT_ID: string = process.env["CLIENT_ID"] || "";
+export const CLIENT_SECRET: string = process.env["CLIENT_SECRET"] || "";
+export const AWS_REGION: string = process.env["AWS_REGION"] || "ap-south-1";
+export const AWS_ACCESS_KEY_ID: string = process.env["AWS_ACCESS_KEY_ID"] || "";
+export const AWS_SECRET_ACCESS_KEY: string = process.env["AWS_SECRET_ACCESS_KEY"] || "";
+export const EMAIL_FROM: string = process.env["EMAIL_FROM"] || "no-reply@discordbot.tech";
+export const NGROK_DOMAIN: string | undefined = process.env["NGROK_DOMAIN"];
+export const NGROK_AUTHTOKEN: string | undefined = process.env["NGROK_AUTHTOKEN"];
+export  async function DYNAMIC_REDIRECT_URI() {
+    if (process.env["NODE_ENV"] === "development") 
+        return `${await ngrokURL}/callback`;
+    else {
+        if(! process.env["REDIRECT_URI"]) throw new Error("REDIRECT_URI environment variable not found.");
+        return process.env["REDIRECT_URI"] as string;
+    }
 };
 
-const devConfig: DevConfig = {
-    ngrokDomain: process.env['NGROK_DOMAIN'],
-    ngrokAuthToken: process.env['NGROK_AUTHTOKEN'],
+// Validation for required variables
+if (!TOKEN || !OAUTH_URL || !MONGO_URI || !CLIENT_ID || !CLIENT_SECRET || !AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY) {
+    throw new Error("One or more required environment variables are missing. Please add them to the .env file.");
 }
 
-function getConfig(): Config & Partial<DevConfig> {
-
-    for (const key in loadedConfig) {
-        if (!loadedConfig[key as keyof Config]) {
-            throw new Error(`Missing environment variable ${key}. Please add the variable to the .env file.`);
-        }
-    }
-    const isDevelopment = process.env['NODE_ENV'] === 'development';
-    if (isDevelopment) {
-        for (const key in devConfig) {
-            if (!devConfig[key as keyof DevConfig]) {
-                console.warn(`Missing environment variable ${key}. Please add the variable to the .env file.`);
-            }
-        }
-    }
-
-    return { ...loadedConfig, ...devConfig, redirectURI: dynamicRedirectURI };
+// Validation for development variables in a development environment
+if (process.env["NODE_ENV"] === "development" && (!NGROK_DOMAIN || !NGROK_AUTHTOKEN)) {
+    console.warn("One or more development environment variables are missing. Please add them to the .env file.");
 }
 
-function setDynamicRedirectURI(uri: string) {
-    dynamicRedirectURI = uri;
-}
-
-export { getConfig, setDynamicRedirectURI };
