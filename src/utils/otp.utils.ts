@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import axios, { AxiosRequestConfig } from "axios";
+import axios from "axios";
 import { Fast2SMS_API_KEY, OTP_SECRET } from "../config";
 
 export const generateOtp = () => {

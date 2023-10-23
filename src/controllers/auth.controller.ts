@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import DiscordOauth2 from "discord-oauth2";
-import { CLIENT_ID, CLIENT_SECRET, DYNAMIC_REDIRECT_URI } from "../config";
 import { TypedRequestBody, TypedRequestQuery } from "zod-express-middleware";
 import {
 	sendOtpValidator,
@@ -9,11 +7,19 @@ import {
 } from "@/inputValidators";
 import { generateOtp, generateOtpHash, sendOtp } from "../utils/otp.utils";
 
-const oauth = new DiscordOauth2({
-	clientId: CLIENT_ID,
-	clientSecret: CLIENT_SECRET,
-	redirectUri: await DYNAMIC_REDIRECT_URI(),
-});
+import {
+	getCustomerByDiscordId,
+	createCustomer,
+	renewCredentials,
+} from "../services/customer.service";
+
+import { signJWT } from "../utils/jwt.utils";
+
+import {
+	getTokens,
+	getDiscordUser,
+	generateOauthUrl,
+} from "../utils/oauth.utils";
 
 export const callbackController = async (
 	req: TypedRequestQuery<typeof callbackValidator.query>,
@@ -21,36 +27,59 @@ export const callbackController = async (
 ) => {
 	try {
 		if (!req.query.code) throw new Error("NoCodeProvided");
-		const token = await oauth.tokenRequest({
-			code: req.query.code,
-			scope: [
-				"identify",
-				"email",
-				"guilds",
-				"guilds.members.read",
-				"guilds.join",
-			],
-			grantType: "authorization_code",
-		});
-		console.log(token);
-		const user = await oauth.getUser(token.access_token);
+		const token = await getTokens(req.query.code);
+		const user = await getDiscordUser(token.access_token);
+		const customer = await getCustomerByDiscordId(user.id);
+		if (!customer) {
+			if (!user.verified || !user.email)
+				throw new Error("EmailNotVerified");
+			const createdCustomer = await createCustomer(
+				user.id,
+				user.username,
+				user.email as string,
+				token.refresh_token,
+				token.access_token,
+				token.expires_in,
+				token.scope,
+			);
+			const jwt = signJWT(
+				{
+					id: createdCustomer._id,
+					discordId: user.id,
+					accessToken: token.access_token,
+					phone: null,
+					email: user.email as string,
+				},
+				`${token.expires_in}s`,
+			);
+			return res.redirect("jwt://" + jwt);
+		}
+		await renewCredentials(
+			user.id,
+			token.refresh_token,
+			token.access_token,
+			token.expires_in,
+			token.scope,
+		);
+		const jwt = signJWT(
+			{
+				id: customer._id,
+				discordId: user.id,
+				accessToken: token.access_token,
+				phone: customer.phone,
+				email: customer.email,
+			},
+			`${token.expires_in}s`,
+		);
+		return res.redirect("jwt://" + jwt);
 	} catch (error: any) {
-		res.status(500).send(error.message);
+		res.status(500).send({ message: error.message, success: false });
 	}
 };
 
 export const loginController = async (req: Request, res: Response) => {
-	const x = oauth.generateAuthUrl({
-		scope: [
-			"identify",
-			"email",
-			"guilds",
-			"guilds.members.read",
-			"guilds.join",
-		],
-		state: "state",
-	});
-	res.redirect(x);
+	const oauthLink = generateOauthUrl("state");
+	res.redirect(oauthLink);
 };
 
 export const sendOtpController = async (
@@ -70,7 +99,7 @@ export const sendOtpController = async (
 			success: true,
 		});
 	} catch (error: any) {
-		res.status(500).send(error.message);
+		res.status(500).send({ message: error.message, success: false });
 	}
 };
 
@@ -87,6 +116,6 @@ export const verifyOtpController = async (
 		if (otpHash !== req.body.otpHash) throw new Error("Invalid OTP");
 		res.send({ message: "OTP verified successfully", success: true });
 	} catch (error: any) {
-		res.status(500).send(error.message);
+		res.status(500).send({ message: error.message, success: false });
 	}
 };

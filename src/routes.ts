@@ -11,6 +11,9 @@ const router = Router();
 
 router.get("/login", loginController);
 router.get("/callback", validateRequest(callbackValidator), callbackController);
+
+
+
 router.post("/send-otp", validateRequest(sendOtpValidator), sendOtpController);
 
 export default router;
