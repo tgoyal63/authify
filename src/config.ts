@@ -7,7 +7,6 @@ if (process.env["NODE_ENV"] === "development") ngrokURL = ngrok();
 else ngrokURL = Promise.resolve("");
 
 export const TOKEN: string = process.env["TOKEN"] || "";
-export const OAUTH_URL: string = process.env["OAUTH_URL"] || "";
 export const MONGO_URI: string = process.env["MONGO_URI"] || "";
 export const PORT: number = parseInt(process.env["PORT"] || "5000", 10);
 export const CLIENT_ID: string = process.env["CLIENT_ID"] || "";
@@ -38,7 +37,6 @@ export async function DYNAMIC_REDIRECT_URI() {
 // Validation for required variables
 if (
 	!TOKEN ||
-	!OAUTH_URL ||
 	!MONGO_URI ||
 	!CLIENT_ID ||
 	!CLIENT_SECRET ||
