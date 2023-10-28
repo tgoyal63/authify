@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 // import { TypedRequestBody, TypedRequestQuery } from "zod-express-middleware";
 import { getGuilds } from "../utils/oauth.utils";
 import { getServicesOfDiscorsGuilds } from "../services/service.service";
+import { isAdmin } from "../utils/discord.utils";
 
 export const getServicesController = async (req: Request, res: Response) => {
 	try {
@@ -29,9 +30,16 @@ export const getGuildsOfUserController = async (
 ) => {
 	try {
 		const guilds = await getGuilds(req.customer.accessToken);
-		console.log(guilds);
+		const respponseData = guilds.map((guild) => {
+			return {
+				id: guild.id,
+				name: guild.name,
+				icon: `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp`,
+				isAdmin: guild.permissions && isAdmin(guild.permissions),
+			};
+		});
 		res.send({
-			data: guilds,
+			data: respponseData,
 			message: "Guilds fetched successfully",
 			success: true,
 		});
