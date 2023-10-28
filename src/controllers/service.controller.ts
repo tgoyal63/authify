@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { TypedRequestQuery } from "zod-express-middleware";
 import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
 import { getServicesOfDiscorsGuilds } from "../services/service.service";
-import { isAdmin } from "../utils/discord.utils";
-import { generateBotInviteLinkValidator } from "../inputValidators/service.validators";
+import { isAdmin, verifyGuild } from "../utils/discord.utils";
+import { generateOrVerifyBotInviteLinkValidator } from "../inputValidators/service.validators";
 
 export const getServicesController = async (req: Request, res: Response) => {
 	try {
@@ -50,7 +50,7 @@ export const getGuildsOfUserController = async (
 };
 
 export const generateBotInviteLinkController = async (
-	req: TypedRequestQuery<typeof generateBotInviteLinkValidator.query>,
+	req: TypedRequestQuery<typeof generateOrVerifyBotInviteLinkValidator.query>,
 	res: Response,
 ) => {
 	try {
@@ -58,6 +58,22 @@ export const generateBotInviteLinkController = async (
 		res.send({
 			data: url,
 			message: "Bot invite link generated successfully",
+			success: true,
+		});
+	} catch (error: any) {
+		res.status(500).send({ message: error.message, success: false });
+	}
+};
+
+export const verifyBotInGuildController = async (
+	req: TypedRequestQuery<typeof generateOrVerifyBotInviteLinkValidator.query>,
+	res: Response,
+) => {
+	try {
+		const isAdded = await verifyGuild(req.query.guildId);
+		res.send({
+			data: { isAdded },
+			message: "Bot status sent.",
 			success: true,
 		});
 	} catch (error: any) {

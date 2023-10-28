@@ -6,8 +6,8 @@ import { z } from "zod";
 // 	}),
 // };
 
-export const generateBotInviteLinkValidator = {
+export const generateOrVerifyBotInviteLinkValidator = {
 	query: z.object({
-		guildId: z.string(),
+		guildId: z.string().regex(/^\d+$/).min(15).max(20),
 	}),
 };

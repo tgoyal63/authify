@@ -11,6 +11,7 @@ import {
 	getServicesController,
 	getGuildsOfUserController,
 	generateBotInviteLinkController,
+	verifyBotInGuildController,
 } from "./controllers/service.controller";
 
 import {
@@ -19,7 +20,7 @@ import {
 	verifyOtpValidator,
 } from "./inputValidators/auth.validators";
 
-import { generateBotInviteLinkValidator } from "./inputValidators/service.validators";
+import { generateOrVerifyBotInviteLinkValidator } from "./inputValidators/service.validators";
 import { validateRequest } from "zod-express-middleware";
 
 import authMiddleware from "./middlewares/auth.middleware";
@@ -38,9 +39,16 @@ router.get("/guilds", authMiddleware, getGuildsOfUserController);
 
 router.get(
 	"/generate-bot-invite-link",
-	validateRequest(generateBotInviteLinkValidator),
+	validateRequest(generateOrVerifyBotInviteLinkValidator),
 	authMiddleware,
 	generateBotInviteLinkController,
+);
+
+router.get(
+	"/verify-bot-in-guild",
+	validateRequest(generateOrVerifyBotInviteLinkValidator),
+	authMiddleware,
+	verifyBotInGuildController,
 );
 
 router.post(
