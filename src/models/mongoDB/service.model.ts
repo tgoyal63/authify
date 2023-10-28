@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 import { CustomerDocument } from "./customer.model";
+import { SubscriptionDocument } from "./subscription.model";
 
 export type ServiceDocument = mongoose.Document & {
 	serverId: string;
 	status: "payment_pending" | "active" | "inactive";
-	subscriptionStart?: Date;
-	subscriptionEnd?: Date;
+	subscription: mongoose.PopulatedDoc<
+		SubscriptionDocument & mongoose.Document
+	>;
 	managingCustomers: Array<
 		mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>
 	>;
@@ -20,6 +22,10 @@ const ServiceSchema = new mongoose.Schema(
 			enum: ["payment_pending", "active", "inactive"],
 			default: "inactive",
 			required: true,
+		},
+		subscription: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Subscription",
 		},
 		managingCustomers: [
 			{

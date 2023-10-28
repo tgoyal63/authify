@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { CustomerDocument } from "./customer.model";
 import { ServiceDocument } from "./service.model";
 
-export type CredentialDocument = mongoose.Document & {
+export type SubscriptionDocument = mongoose.Document & {
 	customer: mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>;
 	service: mongoose.PopulatedDoc<ServiceDocument & mongoose.Document>;
 	active: boolean;
@@ -10,7 +10,7 @@ export type CredentialDocument = mongoose.Document & {
 	EndsAt: Date;
 };
 
-const CredentialSchema = new mongoose.Schema(
+const SubscriptionSchema = new mongoose.Schema(
 	{
 		customer: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -28,7 +28,7 @@ const CredentialSchema = new mongoose.Schema(
 	},
 	{ timestamps: true },
 );
-export default mongoose.model<CredentialDocument>(
+export default mongoose.model<SubscriptionDocument>(
 	"credential",
-	CredentialSchema,
+	SubscriptionSchema,
 );
