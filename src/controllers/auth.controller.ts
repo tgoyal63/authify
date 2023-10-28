@@ -29,6 +29,10 @@ export const callbackController = async (
 	res: Response,
 ) => {
 	try {
+		if (req.query.state === "bot")
+			return res.redirect(
+				`${FRONTEND_CLIENT_URL}/messages/success-message-bot`,
+			);
 		if (!req.query.code) throw new Error("NoCodeProvided");
 		const token = await getTokens(req.query.code);
 		const user = await getDiscordUser(token.access_token);
