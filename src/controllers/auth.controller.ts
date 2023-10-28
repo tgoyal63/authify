@@ -91,7 +91,6 @@ export const callbackController = async (
 			phone: "",
 			type: "signup",
 		});
-		console.log(params.toString());
 		return res.redirect(
 			`${FRONTEND_CLIENT_URL}/auth/callback-url?${params.toString()}`,
 		);

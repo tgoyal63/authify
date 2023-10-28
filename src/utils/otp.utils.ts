@@ -56,7 +56,6 @@ export const sendOtp = async (phone: number, otp: unknown): Promise<void> => {
 		if (response.data.return === false)
 			throw new Error(response.data.message[0] || "Fast2SMS API error.");
 	} catch (error: any) {
-		console.log(error.message);
 		throw new Error("Fast2SMS API error.");
 	}
 };
