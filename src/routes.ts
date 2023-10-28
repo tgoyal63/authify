@@ -10,6 +10,7 @@ import {
 import {
 	getServicesController,
 	getGuildsOfUserController,
+	generateBotInviteLinkController,
 } from "./controllers/service.controller";
 
 import {
@@ -17,6 +18,8 @@ import {
 	callbackValidator,
 	verifyOtpValidator,
 } from "./inputValidators/auth.validators";
+
+import { generateBotInviteLinkValidator } from "./inputValidators/service.validators";
 import { validateRequest } from "zod-express-middleware";
 
 import authMiddleware from "./middlewares/auth.middleware";
@@ -32,6 +35,13 @@ router.get("/callback", validateRequest(callbackValidator), callbackController);
 router.get("/services", authMiddleware, getServicesController);
 
 router.get("/guilds", authMiddleware, getGuildsOfUserController);
+
+router.get(
+	"/generate-bot-invite-link",
+	validateRequest(generateBotInviteLinkValidator),
+	authMiddleware,
+	generateBotInviteLinkController,
+);
 
 router.post(
 	"/send-otp",

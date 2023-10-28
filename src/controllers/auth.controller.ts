@@ -62,7 +62,7 @@ export const callbackController = async (
 			});
 
 			return res.redirect(
-				`${FRONTEND_CLIENT_URL}/auth?${params.toString()}`,
+				`${FRONTEND_CLIENT_URL}/auth/callback-url?${params.toString()}`,
 			);
 		}
 		await renewCredentials(
@@ -89,7 +89,7 @@ export const callbackController = async (
 		});
 		console.log(params.toString());
 		return res.redirect(
-			`${FRONTEND_CLIENT_URL}/auth/phoneverification?${params.toString()}`,
+			`${FRONTEND_CLIENT_URL}/auth/callback-url?${params.toString()}`,
 		);
 	} catch (error: any) {
 		const params = new URLSearchParams({
@@ -97,7 +97,7 @@ export const callbackController = async (
 			type: "signup",
 		});
 		return res.redirect(
-			`${FRONTEND_CLIENT_URL}/auth/phoneverification?${params.toString()}`,
+			`${FRONTEND_CLIENT_URL}/auth/callback-url?${params.toString()}`,
 		);
 	}
 };

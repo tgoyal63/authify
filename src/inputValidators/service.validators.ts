@@ -1,4 +1,4 @@
-// import { z } from "zod";
+import { z } from "zod";
 
 // export const sendOtpValidator = {
 // 	body: z.object({
@@ -6,8 +6,8 @@
 // 	}),
 // };
 
-// export const getServicesValidator = {
-// 	query: z.object({
-// 		code: z.string(),
-// 	}),
-// };
+export const generateBotInviteLinkValidator = {
+	query: z.object({
+		guildId: z.string(),
+	}),
+};

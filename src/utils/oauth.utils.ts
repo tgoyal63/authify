@@ -58,6 +58,17 @@ export const generateOauthUrl = (state: string) => {
 	return url;
 };
 
+export const generateBotInviteLink = (guildId: string) => {
+	const url = oauth.generateAuthUrl({
+		scope: ["bot", "applications.commands"],
+		guildId,
+		disableGuildSelect: true,
+		state: "bot",
+		redirectUri: "https://www.google.com/search?q=bot+added+successfully",
+	});
+	return url;
+};
+
 /**
  *
  * @param token the Discord access token

@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-// import { TypedRequestBody, TypedRequestQuery } from "zod-express-middleware";
-import { getGuilds } from "../utils/oauth.utils";
+import { TypedRequestQuery } from "zod-express-middleware";
+import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
 import { getServicesOfDiscorsGuilds } from "../services/service.service";
 import { isAdmin } from "../utils/discord.utils";
+import { generateBotInviteLinkValidator } from "../inputValidators/service.validators";
 
 export const getServicesController = async (req: Request, res: Response) => {
 	try {
@@ -41,6 +42,22 @@ export const getGuildsOfUserController = async (
 		res.send({
 			data: respponseData,
 			message: "Guilds fetched successfully",
+			success: true,
+		});
+	} catch (error: any) {
+		res.status(500).send({ message: error.message, success: false });
+	}
+};
+
+export const generateBotInviteLinkController = async (
+	req: TypedRequestQuery<typeof generateBotInviteLinkValidator.query>,
+	res: Response,
+) => {
+	try {
+		const url = generateBotInviteLink(req.query.guildId);
+		res.send({
+			data: url,
+			message: "Bot invite link generated successfully",
 			success: true,
 		});
 	} catch (error: any) {
