@@ -3,7 +3,7 @@ import { CustomerDocument } from "./customer.model";
 import { SubscriptionDocument } from "./subscription.model";
 
 export type ServiceDocument = mongoose.Document & {
-	serverId: string;
+	guildId: string;
 	status: "payment_pending" | "active" | "inactive";
 	subscription: mongoose.PopulatedDoc<
 		SubscriptionDocument & mongoose.Document
@@ -16,7 +16,7 @@ export type ServiceDocument = mongoose.Document & {
 
 const ServiceSchema = new mongoose.Schema(
 	{
-		serverId: { type: String, required: true },
+		guildId: { type: String, required: true },
 		status: {
 			type: String,
 			enum: ["payment_pending", "active", "inactive"],

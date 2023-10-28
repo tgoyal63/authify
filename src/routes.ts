@@ -6,6 +6,9 @@ import {
 	verifyOtpController,
 	getOauthController,
 } from "./controllers/auth.controller";
+
+import { getServicesController } from "./controllers/service.controller";
+
 import {
 	sendOtpValidator,
 	callbackValidator,
@@ -22,6 +25,8 @@ router.get("/login", loginController); //will remove
 router.get("get-oauth-link", getOauthController); //will be used instead of login
 
 router.get("/callback", validateRequest(callbackValidator), callbackController);
+
+router.get("/services", authMiddleware, getServicesController);
 
 router.post(
 	"/send-otp",
