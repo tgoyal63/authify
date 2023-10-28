@@ -1,4 +1,4 @@
-import mongoose, { PopulatedDoc, Document } from "mongoose";
+import mongoose from "mongoose";
 import { CredentialDocument } from "./credentials.model";
 
 export type CustomerDocument = mongoose.Document & {
@@ -6,7 +6,9 @@ export type CustomerDocument = mongoose.Document & {
 	phone: number;
 	email: string;
 	discordId: string;
-	discordCredentials: PopulatedDoc<CredentialDocument & Document>;
+	discordCredentials: mongoose.PopulatedDoc<
+		CredentialDocument & mongoose.Document
+	>;
 };
 
 const CustomerSchema = new mongoose.Schema(

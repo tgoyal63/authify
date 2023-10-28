@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 import { CustomerDocument } from "./customer.model";
+import { ServiceDocument } from "./service.model";
 
 export type CredentialDocument = mongoose.Document & {
 	customer: mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>;
-	accessToken: string;
-	refreshToken: string;
-	expiresAt: Date;
-	scope: string;
+	service: mongoose.PopulatedDoc<ServiceDocument & mongoose.Document>;
+	active: boolean;
+	startsAt: Date;
+	EndsAt: Date;
 };
 
 const CredentialSchema = new mongoose.Schema(
@@ -16,10 +17,14 @@ const CredentialSchema = new mongoose.Schema(
 			ref: "customer",
 			required: true,
 		},
-		accessToken: { type: String, required: true },
-		refreshToken: { type: String, required: true },
-		expiresAt: { type: Date, required: true },
-		scope: { type: String, required: true },
+		service: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "service",
+			required: true,
+		},
+		active: { type: Boolean, required: true },
+		startsAt: { type: Date, required: true },
+		endsAt: { type: Date, required: true },
 	},
 	{ timestamps: true },
 );

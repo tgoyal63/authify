@@ -9,6 +9,11 @@ const currentDir = path.dirname(new URL(currentFileUrl).pathname);
 const foldersPath = path.resolve(currentDir, "../discord/commands");
 const commandFolders = fs.readdirSync(foldersPath);
 
+/**
+ * @param filePath The path to the command file
+ * @returns
+ * @description Imports a command file and adds it to the commands collection
+ */
 async function importCommand(filePath: string) {
 	try {
 		const { default: command } = await import(filePath);

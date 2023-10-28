@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
 import { MONGO_URI } from "../config";
 
+/**
+ * Connects to MongoDB
+ * @returns {Promise<void>}
+ * @throws {Error}
+ * @description Connects to MongoDB using the MONGO_URI config variable.
+ */
 async function dbConnect(): Promise<void> {
 	try {
 		mongoose.set("strictQuery", false);

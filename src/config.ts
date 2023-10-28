@@ -1,5 +1,4 @@
-import * as dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
 import ngrok from "./utils/ngrok.util";
 
 let ngrokURL: Promise<string>;
@@ -7,6 +6,8 @@ if (process.env["NODE_ENV"] === "development") ngrokURL = ngrok();
 else ngrokURL = Promise.resolve("");
 
 export const TOKEN: string = process.env["TOKEN"] || "";
+export const FRONTEND_CLIENT_URL: string =
+	process.env["CORS_ORIGIN"] || "http://localhost:3000";
 export const MONGO_URI: string = process.env["MONGO_URI"] || "";
 export const PORT: number = parseInt(process.env["PORT"] || "5000", 10);
 export const CLIENT_ID: string = process.env["CLIENT_ID"] || "";
@@ -23,6 +24,7 @@ export const NGROK_AUTHTOKEN: string | undefined =
 
 export const Fast2SMS_API_KEY: string = process.env["Fast2SMS_API_KEY"] || "";
 export const OTP_SECRET = process.env["OTP_SECRET"] || "supersecretotpsecret";
+export const JWT_SECRET = process.env["JWT_SECRET"] || "supersecretjwtsecret";
 
 export async function DYNAMIC_REDIRECT_URI() {
 	if (process.env["NODE_ENV"] === "development")
@@ -43,7 +45,8 @@ if (
 	!AWS_ACCESS_KEY_ID ||
 	!AWS_SECRET_ACCESS_KEY ||
 	!Fast2SMS_API_KEY ||
-	!OTP_SECRET
+	!OTP_SECRET ||
+	!FRONTEND_CLIENT_URL
 ) {
 	throw new Error(
 		"One or more required environment variables are missing. Please add them to the .env file.",

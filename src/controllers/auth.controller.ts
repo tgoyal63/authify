@@ -4,7 +4,7 @@ import {
 	sendOtpValidator,
 	callbackValidator,
 	verifyOtpValidator,
-} from "@/inputValidators";
+} from "../inputValidators/auth.validators";
 import { generateOtp, generateOtpHash, sendOtp } from "../utils/otp.utils";
 
 import {
@@ -20,6 +20,8 @@ import {
 	getDiscordUser,
 	generateOauthUrl,
 } from "../utils/oauth.utils";
+
+import { FRONTEND_CLIENT_URL } from "../config";
 
 export const callbackController = async (
 	req: TypedRequestQuery<typeof callbackValidator.query>,
@@ -52,7 +54,16 @@ export const callbackController = async (
 				},
 				`${token.expires_in}s`,
 			);
-			return res.redirect("jwt://" + jwt);
+
+			const params = new URLSearchParams({
+				token: jwt,
+				phone: "",
+				type: "signup",
+			});
+
+			return res.redirect(
+				`${FRONTEND_CLIENT_URL}/auth?${params.toString()}`,
+			);
 		}
 		await renewCredentials(
 			user.id,
@@ -71,9 +82,23 @@ export const callbackController = async (
 			},
 			`${token.expires_in}s`,
 		);
-		return res.redirect("jwt://" + jwt);
+		const params = new URLSearchParams({
+			token: jwt,
+			phone: "",
+			type: "signup",
+		});
+		console.log(params.toString());
+		return res.redirect(
+			`${FRONTEND_CLIENT_URL}/auth/phoneverification?${params.toString()}`,
+		);
 	} catch (error: any) {
-		res.status(500).send({ message: error.message, success: false });
+		const params = new URLSearchParams({
+			error: error.message,
+			type: "signup",
+		});
+		return res.redirect(
+			`${FRONTEND_CLIENT_URL}/auth/phoneverification?${params.toString()}`,
+		);
 	}
 };
 
@@ -115,6 +140,15 @@ export const verifyOtpController = async (
 		);
 		if (otpHash !== req.body.otpHash) throw new Error("Invalid OTP");
 		res.send({ message: "OTP verified successfully", success: true });
+	} catch (error: any) {
+		res.status(500).send({ message: error.message, success: false });
+	}
+};
+
+export const getOauthController = async (req: Request, res: Response) => {
+	try {
+		const oauthLink = generateOauthUrl("state");
+		res.send({ oauthLink });
 	} catch (error: any) {
 		res.status(500).send({ message: error.message, success: false });
 	}
