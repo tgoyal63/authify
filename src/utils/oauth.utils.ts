@@ -64,6 +64,7 @@ export const generateBotInviteLink = (guildId: string) => {
 		guildId,
 		disableGuildSelect: true,
 		state: "bot",
+		permissions: 8,
 		redirectUri: "https://www.google.com/search?q=bot+added+successfully",
 	});
 	return url;
