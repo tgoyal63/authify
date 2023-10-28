@@ -33,10 +33,15 @@ export const getTokens = async (code: string) => {
  * @param token the Discord access token
  * @returns an object containing the user details
  * @description Gets the user details from the Discord API using the access token received from the Discord OAuth2.
+ * @throws Error if the token is invalid
  */
 export const getDiscordUser = async (token: string) => {
-	const user = await oauth.getUser(token);
-	return user;
+	try {
+		const user = await oauth.getUser(token);
+		return user;
+	} catch (e) {
+		throw new Error("Invalid Discord Token");
+	}
 };
 
 export const generateOauthUrl = (state: string) => {

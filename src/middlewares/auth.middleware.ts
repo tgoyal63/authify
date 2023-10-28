@@ -41,14 +41,13 @@ export default async function (
 		if (!userData) {
 			throw new Error("Invalid token");
 		}
-		const discordUser = await getDiscordUser(userData.accessToken);
 
 		const customer = {
 			id: userData.id,
 			discordId: userData.discordId,
 			accessToken: userData.accessToken,
+			phone: userData.phone,
 			email: userData.email,
-			DiscordUser: discordUser,
 			getDiscordUser: async () => {
 				return await getDiscordUser(userData.accessToken);
 			},

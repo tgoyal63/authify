@@ -11,6 +11,7 @@ import {
 	getCustomerByDiscordId,
 	createCustomer,
 	renewCredentials,
+	updatePhone,
 } from "../services/customer.service";
 
 import { signJWT } from "../utils/jwt.utils";
@@ -79,7 +80,7 @@ export const callbackController = async (
 				phone: String(customer.phone),
 				email: customer.email,
 			},
-			`${token.expires_in}s`,
+			"14d",
 		);
 		const params = new URLSearchParams({
 			token: jwt,
@@ -116,9 +117,11 @@ export const sendOtpController = async (
 		const otpHash = generateOtpHash(req.body.phone, otp, expiresAt);
 		await sendOtp(req.body.phone, otp);
 		res.send({
-			phone: req.body.phone,
-			expiresAt,
-			otpHash,
+			data: {
+				phone: req.body.phone,
+				expiresAt,
+				otpHash,
+			},
 			message: "OTP sent successfully",
 			success: true,
 		});
@@ -138,8 +141,27 @@ export const verifyOtpController = async (
 			req.body.expiresAt,
 		);
 		if (otpHash !== req.body.otpHash) throw new Error("Invalid OTP");
-		res.send({ message: "OTP verified successfully", success: true });
+		await updatePhone(req.customer.id, req.body.phone);
+		const newJWT = signJWT(
+			{
+				id: req.customer.id,
+				discordId: req.customer.discordId,
+				accessToken: req.customer.accessToken,
+				phone: String(req.body.phone),
+				email: req.customer.email,
+			},
+			"14d",
+		);
+
+		res.send({
+			message: "OTP verified successfully",
+			success: true,
+			data: { token: newJWT },
+		});
 	} catch (error: any) {
+		if (error instanceof Error && error.message === "Invalid OTP") {
+			res.status(400).send({ message: error.message, success: false });
+		}
 		res.status(500).send({ message: error.message, success: false });
 	}
 };
@@ -147,7 +169,11 @@ export const verifyOtpController = async (
 export const getOauthController = async (req: Request, res: Response) => {
 	try {
 		const oauthLink = generateOauthUrl("state");
-		res.send({ oauthLink });
+		res.send({
+			data: { oauthLink },
+			success: true,
+			message: "Oauth link generated successfully",
+		});
 	} catch (error: any) {
 		res.status(500).send({ message: error.message, success: false });
 	}

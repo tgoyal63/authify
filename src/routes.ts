@@ -13,6 +13,8 @@ import {
 } from "./inputValidators/auth.validators";
 import { validateRequest } from "zod-express-middleware";
 
+import authMiddleware from "./middlewares/auth.middleware";
+
 const router = Router();
 
 router.get("/login", loginController); //will remove
@@ -21,9 +23,15 @@ router.get("get-oauth-link", getOauthController); //will be used instead of logi
 
 router.get("/callback", validateRequest(callbackValidator), callbackController);
 
-router.post("/send-otp", validateRequest(sendOtpValidator), sendOtpController);
+router.post(
+	"/send-otp",
+	authMiddleware,
+	validateRequest(sendOtpValidator),
+	sendOtpController,
+);
 router.post(
 	"/verify-otp",
+	authMiddleware,
 	validateRequest(verifyOtpValidator),
 	verifyOtpController,
 );

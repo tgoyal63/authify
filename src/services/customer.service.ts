@@ -54,3 +54,7 @@ export const renewCredentials = async (
 	);
 	return credentials;
 };
+
+export const updatePhone = async (id: string, phone: number) => {
+	customerModel.findByIdAndUpdate(id, { phone });
+};
