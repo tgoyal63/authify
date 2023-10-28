@@ -7,7 +7,10 @@ import {
 	getOauthController,
 } from "./controllers/auth.controller";
 
-import { getServicesController } from "./controllers/service.controller";
+import {
+	getServicesController,
+	getGuildsOfUserController,
+} from "./controllers/service.controller";
 
 import {
 	sendOtpValidator,
@@ -27,6 +30,8 @@ router.get("get-oauth-link", getOauthController); //will be used instead of logi
 router.get("/callback", validateRequest(callbackValidator), callbackController);
 
 router.get("/services", authMiddleware, getServicesController);
+
+router.get("/guilds", authMiddleware, getGuildsOfUserController);
 
 router.post(
 	"/send-otp",
