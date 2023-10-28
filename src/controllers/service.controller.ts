@@ -7,7 +7,6 @@ export const getServicesController = async (req: Request, res: Response) => {
 	try {
 		const guilds = await getGuilds(req.customer.accessToken);
 		const guildIds = guilds.map((guild) => guild.id);
-		console.log(guilds);
 		const services = await getServicesOfDiscorsGuilds(guildIds);
 		const servicesWithGuilds = services.map((service) => {
 			const guild = guilds.find((guild) => guild.id === service.guildId);
@@ -22,4 +21,21 @@ export const getServicesController = async (req: Request, res: Response) => {
 			success: true,
 		});
 	} catch (error: any) {}
+};
+
+export const getGuildsOfUserController = async (
+	req: Request,
+	res: Response,
+) => {
+	try {
+		const guilds = await getGuilds(req.customer.accessToken);
+		console.log(guilds);
+		res.send({
+			data: guilds,
+			message: "Guilds fetched successfully",
+			success: true,
+		});
+	} catch (error: any) {
+		res.status(500).send({ message: error.message, success: false });
+	}
 };

@@ -1,25 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyJWT } from "../utils/jwt.utils";
 import { getDiscordUser } from "../utils/oauth.utils";
-import { User as DiscordUser } from "discord-oauth2";
-
-export type User = {
-	id: string;
-	discordId: string;
-	accessToken: string;
-	phone?: string;
-	email: string;
-	getDiscordUser: () => Promise<DiscordUser>;
-};
-
-declare global {
-	// will change this when i figure out how to do it properly
-	namespace Express {
-		interface Request {
-			customer: User;
-		}
-	}
-}
+import { User } from "../types/common";
 
 export default async function (
 	req: Request,
