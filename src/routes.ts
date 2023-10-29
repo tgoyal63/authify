@@ -23,6 +23,9 @@ import {
 import { generateOrVerifyBotInviteLinkValidator } from "./inputValidators/service.validators";
 import { validateRequest } from "zod-express-middleware";
 
+import { getInternalSheetController } from "./controllers/sheet.controller";
+import { getInternalSheetValidator } from "./inputValidators/sheet.validators";
+
 import authMiddleware from "./middlewares/auth.middleware";
 
 const router = Router();
@@ -62,6 +65,12 @@ router.post(
 	authMiddleware,
 	validateRequest(verifyOtpValidator),
 	verifyOtpController,
+);
+
+router.get(
+	"/sheet",
+	validateRequest(getInternalSheetValidator),
+	getInternalSheetController,
 );
 
 export default router;
