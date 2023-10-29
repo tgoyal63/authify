@@ -16,9 +16,9 @@ export const getInternalSheetController = async (
 			res.send({ success: false, message: "No sheet found" });
 			return;
 		}
-		const sheetId = sheetSplit[1] as string;
+		const spreadSheetId = sheetSplit[1] as string;
 
-		const internalSheetData = await getInternalSheets(sheetId);
+		const internalSheetData = await getInternalSheets(spreadSheetId);
 		if (!internalSheetData) {
 			res.send({ success: false, message: "No sheet found" });
 			return;
@@ -26,7 +26,7 @@ export const getInternalSheetController = async (
 
 		const respponseData = internalSheetData.map((sheet) => {
 			return {
-				id: sheet.properties?.sheetId,
+				sheetId: sheet.properties?.sheetId,
 				title: sheet.properties?.title,
 				index: sheet.properties?.index,
 			};
@@ -50,7 +50,7 @@ export const getSheetDataController = async (req: Request, res: Response) => {
 			return;
 		}
 		const sheetId = sheetSplit[1] as string;
-		const data = getSheetData(sheetId, "sid");
+		const data = await getSheetData(sheetId, 1897314246);
 		res.send({ success: true, data, message: "Data fetched successfully" });
 	} catch (error) {
 		console.log(error);
