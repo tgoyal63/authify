@@ -68,7 +68,7 @@ router.post(
 );
 
 router.get(
-	"/sheet",
+	"/internal-sheet",
 	validateRequest(getInternalSheetValidator),
 	getInternalSheetController,
 );
