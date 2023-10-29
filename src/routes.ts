@@ -23,8 +23,14 @@ import {
 import { generateOrVerifyBotInviteLinkValidator } from "./inputValidators/service.validators";
 import { validateRequest } from "zod-express-middleware";
 
-import { getInternalSheetController } from "./controllers/sheet.controller";
-import { getInternalSheetValidator } from "./inputValidators/sheet.validators";
+import {
+	getInternalSheetController,
+	getSheetHeadersController,
+} from "./controllers/sheet.controller";
+import {
+	getInternalSheetValidator,
+	getSheetHeadersValidator,
+} from "./inputValidators/sheet.validators";
 
 import authMiddleware from "./middlewares/auth.middleware";
 
@@ -69,8 +75,15 @@ router.post(
 
 router.get(
 	"/internal-sheet",
+	authMiddleware,
 	validateRequest(getInternalSheetValidator),
 	getInternalSheetController,
 );
 
+router.get(
+	"/sheet-headers",
+	authMiddleware,
+	validateRequest(getSheetHeadersValidator),
+	getSheetHeadersController,
+);
 export default router;

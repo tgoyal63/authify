@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { getInternalSheets, getSheetData } from "../utils/sheet.utils";
 import { TypedRequestQuery } from "zod-express-middleware";
 import {
 	getInternalSheetValidator,
+	getSheetHeadersValidator,
 	sheetRegex,
 } from "../inputValidators/sheet.validators";
 
@@ -11,7 +12,7 @@ export const getInternalSheetController = async (
 	res: Response,
 ) => {
 	try {
-		const sheetSplit = req.query.sheetUrl.match(sheetRegex);
+		const sheetSplit = req.query.spreadSheetUrl.match(sheetRegex);
 		if (!sheetSplit) {
 			res.send({ success: false, message: "No sheet found" });
 			return;
@@ -41,18 +42,23 @@ export const getInternalSheetController = async (
 	}
 };
 
-export const getSheetDataController = async (req: Request, res: Response) => {
+export const getSheetHeadersController = async (
+	req: TypedRequestQuery<typeof getSheetHeadersValidator.query>,
+	res: Response,
+) => {
 	try {
-		const shes = req.query?.["sheetUrl"] as string;
-		const sheetSplit = shes.match(sheetRegex);
-		if (!sheetSplit) {
-			res.send({ success: false, message: "No sheet found" });
-			return;
-		}
-		const sheetId = sheetSplit[1] as string;
-		const data = await getSheetData(sheetId, 1897314246);
-		res.send({ success: true, data, message: "Data fetched successfully" });
-	} catch (error) {
-		console.log(error);
+		const sheetSplit = req.query.spreadSheetUrl.match(sheetRegex);
+		if (!sheetSplit) throw new Error("No sheet found");
+		const spreadSheetId = sheetSplit[1] as string;
+		const sheetId = parseInt(req.query.sheetId);
+		const sheetData = await getSheetData(spreadSheetId, sheetId);
+		const headers = sheetData.values?.shift();
+		res.send({
+			success: true,
+			data: headers,
+			message: "Data fetched successfully",
+		});
+	} catch (error: any) {
+		res.status(500).send({ message: error.message, success: false });
 	}
 };

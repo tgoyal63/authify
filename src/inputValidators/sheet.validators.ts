@@ -5,6 +5,13 @@ export const sheetRegex =
 
 export const getInternalSheetValidator = {
 	query: z.object({
-		sheetUrl: z.string().regex(sheetRegex),
+		spreadSheetUrl: z.string().regex(sheetRegex),
+	}),
+};
+
+export const getSheetHeadersValidator = {
+	query: z.object({
+		spreadSheetUrl: z.string().regex(sheetRegex),
+		sheetId: z.string().regex(/^\d+$/),
 	}),
 };
