@@ -7,7 +7,11 @@ import cors from "cors";
 
 const corsOptions = {
 	origin: FRONTEND_CLIENT_URL,
-	allowedHeaders: ["Content-Type", "Authorization"],
+	allowedHeaders: [
+		"Content-Type",
+		"Authorization",
+		"ngrok-skip-browser-warning",
+	],
 } as cors.CorsOptions;
 
 const app = express();
