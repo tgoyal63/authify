@@ -20,16 +20,18 @@ import {
 	verifyOtpValidator,
 } from "./inputValidators/auth.validators";
 
-import { generateOrVerifyBotInviteLinkValidator } from "./inputValidators/service.validators";
+import { guildIdValidator } from "./inputValidators/service.validators";
 import { validateRequest } from "zod-express-middleware";
 
 import {
 	getInternalSheetController,
-	getSheetHeadersController,
+	validateSheetHeadersController,
 } from "./controllers/sheet.controller";
+
+import { getAvailableRolesController } from "./controllers/discord.controller";
 import {
 	getInternalSheetValidator,
-	getSheetHeadersValidator,
+	sheetHeadersValidator,
 } from "./inputValidators/sheet.validators";
 
 import authMiddleware from "./middlewares/auth.middleware";
@@ -48,14 +50,14 @@ router.get("/guilds", authMiddleware, getGuildsOfUserController);
 
 router.get(
 	"/generate-bot-invite-link",
-	validateRequest(generateOrVerifyBotInviteLinkValidator),
+	validateRequest(guildIdValidator),
 	authMiddleware,
 	generateBotInviteLinkController,
 );
 
 router.get(
 	"/verify-bot-in-guild",
-	validateRequest(generateOrVerifyBotInviteLinkValidator),
+	validateRequest(guildIdValidator),
 	authMiddleware,
 	verifyBotInGuildController,
 );
@@ -74,16 +76,23 @@ router.post(
 );
 
 router.get(
-	"/internal-sheet",
+	"/internal-sheets",
 	authMiddleware,
 	validateRequest(getInternalSheetValidator),
 	getInternalSheetController,
 );
 
 router.get(
-	"/sheet-headers",
+	"/validate-sheet-headers",
 	authMiddleware,
-	validateRequest(getSheetHeadersValidator),
-	getSheetHeadersController,
+	validateRequest(sheetHeadersValidator),
+	validateSheetHeadersController,
+);
+
+router.get(
+	"/discord-roles",
+	authMiddleware,
+	validateRequest(guildIdValidator),
+	getAvailableRolesController,
 );
 export default router;

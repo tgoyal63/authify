@@ -1,5 +1,4 @@
 import { google } from "googleapis";
-import { GaxiosError } from "gaxios";
 
 const auth = new google.auth.GoogleAuth({
 	keyFile: "google-credentials.json",
@@ -17,25 +16,76 @@ export const getInternalSheets = async (spreadsheetId: string) => {
 
 		return metaData.data.sheets;
 	} catch (error) {
-		if (error instanceof GaxiosError) {
-			if (error.message == "Requested entity was not found.") return null;
-		}
+		throw error;
+	}
+};
+
+export const getInternalSheet = async (
+	spreadsheetId: string,
+	sheetId: number,
+) => {
+	try {
+		const allSheets = await getInternalSheets(spreadsheetId);
+		const sheet = allSheets?.find(
+			(sheet) => sheet.properties?.sheetId == sheetId,
+		);
+		return sheet;
+	} catch (error) {
 		throw error;
 	}
 };
 
 export const getSheetData = async (spreadsheetId: string, sheetId: number) => {
 	try {
-		const allSheets = await getInternalSheets(spreadsheetId);
-		const sheet = allSheets?.find(
-			(sheet) => sheet.properties?.sheetId == sheetId,
-		);
+		const sheet = await getInternalSheet(spreadsheetId, sheetId);
 		const sheetData = await googleSheets.spreadsheets.values.get({
 			auth,
 			spreadsheetId,
 			range: sheet?.properties?.title as string,
 		});
 		return sheetData.data;
+	} catch (error) {
+		throw error;
+	}
+};
+
+export const getCell = async (
+	spreadsheetId: string,
+	sheetId: number,
+	cell: string,
+) => {
+	try {
+		const sheet = await getInternalSheet(spreadsheetId, sheetId);
+		const sheetData = await googleSheets.spreadsheets.values.get({
+			auth,
+			spreadsheetId,
+			range: `${sheet?.properties?.title}!${cell}`,
+		});
+		return sheetData.data.values?.[0]?.[0];
+	} catch (error) {
+		throw error;
+	}
+};
+
+export const editCell = async (
+	spreadsheetId: string,
+	sheetId: number,
+	cell: string,
+	value: string,
+) => {
+	try {
+		const sheet = await getInternalSheet(spreadsheetId, sheetId);
+		const sheetData = await googleSheets.spreadsheets.values.update({
+			auth,
+			spreadsheetId,
+			range: `${sheet?.properties?.title}!${cell}`,
+			valueInputOption: "USER_ENTERED",
+			includeValuesInResponse: true,
+			requestBody: {
+				values: [[value]],
+			},
+		});
+		return sheetData.data.updatedData?.values?.[0]?.[0];
 	} catch (error) {
 		throw error;
 	}

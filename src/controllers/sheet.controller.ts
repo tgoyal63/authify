@@ -1,9 +1,9 @@
 import { Response } from "express";
-import { getInternalSheets, getSheetData } from "../utils/sheet.utils";
+import { getInternalSheets, getCell, editCell } from "../utils/sheet.utils";
 import { TypedRequestQuery } from "zod-express-middleware";
 import {
 	getInternalSheetValidator,
-	getSheetHeadersValidator,
+	sheetHeadersValidator,
 	sheetRegex,
 } from "../inputValidators/sheet.validators";
 
@@ -42,8 +42,8 @@ export const getInternalSheetController = async (
 	}
 };
 
-export const getSheetHeadersController = async (
-	req: TypedRequestQuery<typeof getSheetHeadersValidator.query>,
+export const validateSheetHeadersController = async (
+	req: TypedRequestQuery<typeof sheetHeadersValidator.query>,
 	res: Response,
 ) => {
 	try {
@@ -51,12 +51,25 @@ export const getSheetHeadersController = async (
 		if (!sheetSplit) throw new Error("No sheet found");
 		const spreadSheetId = sheetSplit[1] as string;
 		const sheetId = parseInt(req.query.sheetId);
-		const sheetData = await getSheetData(spreadSheetId, sheetId);
-		const headers = sheetData.values?.shift();
+		const phoneNumberCell = req.query.phoneCell;
+		const emailCell = req.query.emailCell;
+		const discordIdCell = req.query.discordIdCell;
+
+		const [phoneNumberHeader, emailHeader, discordIdHeader] =
+			await Promise.all([
+				getCell(spreadSheetId, sheetId, phoneNumberCell),
+				getCell(spreadSheetId, sheetId, emailCell),
+				editCell(spreadSheetId, sheetId, discordIdCell, "discord_id"),
+			]);
+
 		res.send({
 			success: true,
-			data: headers,
-			message: "Data fetched successfully",
+			data: {
+				phoneNumberHeader: phoneNumberHeader,
+				emailHeader: emailHeader,
+				discordIdHeader: discordIdHeader,
+			},
+			message: "Sheet headers fetched succesfully.",
 		});
 	} catch (error: any) {
 		res.status(500).send({ message: error.message, success: false });
