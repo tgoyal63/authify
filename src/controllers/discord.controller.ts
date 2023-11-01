@@ -27,7 +27,6 @@ export const getAvailableRolesController = async (
 				icon: role.iconURL(),
 			};
 		});
-	console.log(guild.roles.cache);
 	res.send({
 		success: true,
 		data: roles,
