@@ -3,7 +3,7 @@ import { TypedRequestQuery } from "zod-express-middleware";
 import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
 import { getServicesOfDiscorsGuilds } from "../services/service.service";
 import { isAdmin, verifyGuild } from "../utils/discord.utils";
-import { generateOrVerifyBotInviteLinkValidator } from "../inputValidators/service.validators";
+import { guildIdValidator } from "../inputValidators/service.validators";
 
 export const getServicesController = async (req: Request, res: Response) => {
 	try {
@@ -50,7 +50,7 @@ export const getGuildsOfUserController = async (
 };
 
 export const generateBotInviteLinkController = async (
-	req: TypedRequestQuery<typeof generateOrVerifyBotInviteLinkValidator.query>,
+	req: TypedRequestQuery<typeof guildIdValidator.query>,
 	res: Response,
 ) => {
 	try {
@@ -66,7 +66,7 @@ export const generateBotInviteLinkController = async (
 };
 
 export const verifyBotInGuildController = async (
-	req: TypedRequestQuery<typeof generateOrVerifyBotInviteLinkValidator.query>,
+	req: TypedRequestQuery<typeof guildIdValidator.query>,
 	res: Response,
 ) => {
 	try {
