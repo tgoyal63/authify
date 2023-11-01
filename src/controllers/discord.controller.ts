@@ -12,21 +12,18 @@ export const getAvailableRolesController = async (
 	if (!guild.members.me?.roles.highest)
 		throw new Error("Bot is not in the guild");
 	const botHighestRole = guild.members.me.roles.highest;
-	const roles = guild.roles.cache
-		.filter(
-			(role) =>
+	const roles = guild.roles.cache.map((role) => {
+		return {
+			id: role.id,
+			name: role.name,
+			color: role.hexColor,
+			icon: role.iconURL(),
+			enabled:
 				role.comparePositionTo(botHighestRole) < 0 &&
 				!role.managed &&
 				role.name !== "@everyone",
-		)
-		.map((role) => {
-			return {
-				id: role.id,
-				name: role.name,
-				color: role.hexColor,
-				icon: role.iconURL(),
-			};
-		});
+		};
+	});
 	res.send({
 		success: true,
 		data: roles,
