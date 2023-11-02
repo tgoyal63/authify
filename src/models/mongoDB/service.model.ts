@@ -19,7 +19,7 @@ const ServiceSchema = new mongoose.Schema(
 		},
 		creator: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Customer",
+			ref: "customer",
 		},
 	},
 	{ timestamps: true },

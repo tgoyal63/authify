@@ -21,7 +21,7 @@ export const getServicesController = async (req: Request, res: Response) => {
 		const servicesWithGuilds = services.map((service) => {
 			const guild = guilds.find((guild) => guild.id === service.guildId);
 			return {
-				...service.toObject(),
+				...service,
 				guild: guild,
 			};
 		});

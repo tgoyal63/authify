@@ -10,8 +10,8 @@ export const getNumberOfServicesInDiscordGuild = async (guildId: string) => {
 export const getServicesOfDiscorsGuilds = async (guildIds: string[]) => {
 	const services = await serviceModel
 		.find({ guildId: { $in: guildIds } })
-		.populate("spreadsheet")
-		.populate("creator");
+		.populate(["spreadsheet", "creator"])
+		.lean();
 	return services;
 };
 
