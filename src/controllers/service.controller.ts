@@ -92,19 +92,18 @@ export const createServiceController = async (
 ) => {
 	try {
 		const phoneNumberRow = req.body.phoneCell.match(/\d+/g)?.[0] as string;
-		const phoneNumberColumn = req.body.phoneCell.match(/[A-Z]+/g)?.[0] as string;
+		const phoneNumberColumn = req.body.phoneCell.match(
+			/[A-Z]+/g,
+		)?.[0] as string;
 		const emailRow = req.body.emailCell.match(/\d+/g)?.[0];
 		const emailColumn = req.body.emailCell.match(/[A-Z]+/g)?.[0] as string;
 		const discordIdRow = req.body.discordIdCell.match(/\d+/g)?.[0];
-		const discordIdColumn = req.body.discordIdCell.match(/[A-Z]+/g)?.[0] as string;
-		if (
-			phoneNumberRow !== emailRow ||
-			phoneNumberRow !== discordIdRow ||
-			phoneNumberColumn !== emailColumn ||
-			phoneNumberColumn !== discordIdColumn
-		)
+		const discordIdColumn = req.body.discordIdCell.match(
+			/[A-Z]+/g,
+		)?.[0] as string;
+		if (phoneNumberRow !== emailRow || phoneNumberRow !== discordIdRow)
 			throw new Error("All the cells should be in the same row");
-		
+
 		const service = await createService(
 			phoneNumberColumn,
 			emailColumn,
@@ -116,13 +115,12 @@ export const createServiceController = async (
 			req.body.guildId,
 			req.customer.id,
 		);
-		
+
 		res.send({
 			data: service,
 			message: "Service created successfully",
 			success: true,
 		});
-
 	} catch (error: any) {
 		res.status(500).send({ message: error.message, success: false });
 	}
