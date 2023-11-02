@@ -2,17 +2,23 @@ import serviceModel from "../models/mongoDB/service.model";
 import spreadsheetModel from "../models/mongoDB/spreadsheet.models";
 import { sheetRegex } from "../inputValidators/sheet.validators";
 
+export const getNumberOfServicesInDiscordGuild = async (guildId: string) => {
+	const numberOfServices = await serviceModel.countDocuments({ guildId });
+	return numberOfServices;
+};
+
 export const getServicesOfDiscorsGuilds = async (guildIds: string[]) => {
 	const services = await serviceModel
 		.find({ guildId: { $in: guildIds } })
-		.populate("spreadsheet").populate("creator");
+		.populate("spreadsheet")
+		.populate("creator");
 	return services;
 };
 
 export const getServicesOfDiscorsGuild = async (guildId: string) => {
 	const services = await serviceModel.find({ guildId });
 	return services;
-}
+};
 
 export const createService = async (
 	phoneNumberColumn: string,

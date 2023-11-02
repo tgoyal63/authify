@@ -2,7 +2,7 @@ import { Interaction } from "discord.js";
 import commands from "../../utils/command.util";
 
 export default async (interaction: Interaction) => {
-	if (!interaction.isCommand()) return;
+	if (!interaction.isChatInputCommand()) return;
 	const command = commands.get(interaction.commandName);
 	if (!command) {
 		console.error(

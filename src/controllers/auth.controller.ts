@@ -86,6 +86,7 @@ export const callbackController = async (
 			},
 			"14d",
 		);
+		// console.log(jwt)
 		const params = new URLSearchParams({
 			token: jwt,
 			phone: "",

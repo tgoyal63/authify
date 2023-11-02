@@ -26,6 +26,8 @@ export const Fast2SMS_API_KEY: string = process.env["Fast2SMS_API_KEY"] || "";
 export const OTP_SECRET = process.env["OTP_SECRET"] || "supersecretotpsecret";
 export const JWT_SECRET = process.env["JWT_SECRET"] || "supersecretjwtsecret";
 
+export const GUILD_ID = process.env["GUILD_ID"] || "1165185944534667395";
+
 export async function DYNAMIC_REDIRECT_URI() {
 	if (process.env["NODE_ENV"] === "development")
 		return `${await ngrokURL}/callback`;

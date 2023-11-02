@@ -21,7 +21,10 @@ import {
 	verifyOtpValidator,
 } from "./inputValidators/auth.validators";
 
-import { createServiceValidator, guildIdValidator } from "./inputValidators/service.validators";
+import {
+	createServiceValidator,
+	guildIdValidator,
+} from "./inputValidators/service.validators";
 import { validateRequest } from "zod-express-middleware";
 
 import {
@@ -41,7 +44,7 @@ const router = Router();
 
 router.get("/login", loginController); //will remove
 
-router.get("get-oauth-link", getOauthController); //will be used instead of login
+router.get("/oauth-link", getOauthController); //will be used instead of login
 
 router.get("/callback", validateRequest(callbackValidator), callbackController);
 
@@ -102,5 +105,5 @@ router.post(
 	authMiddleware,
 	validateRequest(createServiceValidator),
 	createServiceController,
-)
+);
 export default router;

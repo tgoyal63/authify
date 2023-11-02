@@ -1,7 +1,8 @@
-import { PORT, FRONTEND_CLIENT_URL } from "./config";
+import { PORT, FRONTEND_CLIENT_URL, GUILD_ID } from "./config";
 import express from "express";
 import dbConnect from "./utils/dbconn.util";
 import { loginToBot } from "./discord";
+import { deployCommandsToTestingServer } from "./utils/discord.utils";
 import routes from "./routes";
 import cors from "cors";
 
@@ -20,8 +21,9 @@ app.use(express.json());
 app.use(routes);
 
 dbConnect().then(() => {
-	app.listen(PORT, () => {
+	app.listen(PORT, async() => {
 		console.log(`Server listening on port ${PORT}`);
+		await deployCommandsToTestingServer(GUILD_ID);
 		loginToBot();
 	});
 });

@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import { TypedRequestBody, TypedRequestQuery } from "zod-express-middleware";
 import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
-import { getServicesOfDiscorsGuilds } from "../services/service.service";
+import {
+	getServicesOfDiscorsGuilds,
+	getNumberOfServicesInDiscordGuild,
+} from "../services/service.service";
 import { isAdmin, verifyGuild } from "../utils/discord.utils";
 import {
 	createServiceValidator,
@@ -91,6 +94,11 @@ export const createServiceController = async (
 	res: Response,
 ) => {
 	try {
+		const numberOfExistingServices =
+			await getNumberOfServicesInDiscordGuild(req.body.guildId);
+		if (numberOfExistingServices >= 1)
+			throw new Error("You can only have one service per guild");
+
 		const phoneNumberRow = req.body.phoneCell.match(/\d+/g)?.[0] as string;
 		const phoneNumberColumn = req.body.phoneCell.match(
 			/[A-Z]+/g,
