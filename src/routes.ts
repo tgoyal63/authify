@@ -12,6 +12,7 @@ import {
 	getGuildsOfUserController,
 	generateBotInviteLinkController,
 	verifyBotInGuildController,
+	createServiceController,
 } from "./controllers/service.controller";
 
 import {
@@ -20,7 +21,7 @@ import {
 	verifyOtpValidator,
 } from "./inputValidators/auth.validators";
 
-import { guildIdValidator } from "./inputValidators/service.validators";
+import { createServiceValidator, guildIdValidator } from "./inputValidators/service.validators";
 import { validateRequest } from "zod-express-middleware";
 
 import {
@@ -95,4 +96,11 @@ router.get(
 	validateRequest(guildIdValidator),
 	getAvailableRolesController,
 );
+
+router.post(
+	"/create-service",
+	authMiddleware,
+	validateRequest(createServiceValidator),
+	createServiceController,
+)
 export default router;

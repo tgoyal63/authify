@@ -40,5 +40,9 @@
 		"mongoose": "^7.6.3",
 		"zod": "^3.22.4",
 		"zod-express-middleware": "^1.4.0"
+	},
+	"engines": {
+		"node": "=18.18.0",
+		"npm": "=9.8.1"
 	}
 }

@@ -1,9 +1,14 @@
 import { Request, Response } from "express";
-import { TypedRequestQuery } from "zod-express-middleware";
+import { TypedRequestBody, TypedRequestQuery } from "zod-express-middleware";
 import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
 import { getServicesOfDiscorsGuilds } from "../services/service.service";
 import { isAdmin, verifyGuild } from "../utils/discord.utils";
-import { guildIdValidator } from "../inputValidators/service.validators";
+import {
+	createServiceValidator,
+	guildIdValidator,
+} from "../inputValidators/service.validators";
+
+import { createService } from "../services/service.service";
 
 export const getServicesController = async (req: Request, res: Response) => {
 	try {
@@ -76,6 +81,48 @@ export const verifyBotInGuildController = async (
 			message: "Bot status sent.",
 			success: true,
 		});
+	} catch (error: any) {
+		res.status(500).send({ message: error.message, success: false });
+	}
+};
+
+export const createServiceController = async (
+	req: TypedRequestBody<typeof createServiceValidator.body>,
+	res: Response,
+) => {
+	try {
+		const phoneNumberRow = req.body.phoneCell.match(/\d+/g)?.[0] as string;
+		const phoneNumberColumn = req.body.phoneCell.match(/[A-Z]+/g)?.[0] as string;
+		const emailRow = req.body.emailCell.match(/\d+/g)?.[0];
+		const emailColumn = req.body.emailCell.match(/[A-Z]+/g)?.[0] as string;
+		const discordIdRow = req.body.discordIdCell.match(/\d+/g)?.[0];
+		const discordIdColumn = req.body.discordIdCell.match(/[A-Z]+/g)?.[0] as string;
+		if (
+			phoneNumberRow !== emailRow ||
+			phoneNumberRow !== discordIdRow ||
+			phoneNumberColumn !== emailColumn ||
+			phoneNumberColumn !== discordIdColumn
+		)
+			throw new Error("All the cells should be in the same row");
+		
+		const service = await createService(
+			phoneNumberColumn,
+			emailColumn,
+			discordIdColumn,
+			parseInt(phoneNumberRow),
+			req.body.sheetName,
+			req.body.spreadSheetUrl,
+			req.body.sheetId,
+			req.body.guildId,
+			req.customer.id,
+		);
+		
+		res.send({
+			data: service,
+			message: "Service created successfully",
+			success: true,
+		});
+
 	} catch (error: any) {
 		res.status(500).send({ message: error.message, success: false });
 	}

@@ -1,7 +1,7 @@
 import { TypedRequestQuery } from "zod-express-middleware";
 import client from "../discord";
 import { Response } from "express";
-import { guildIdValidator } from "@/inputValidators/service.validators";
+import { guildIdValidator } from "../inputValidators/service.validators";
 
 export const getAvailableRolesController = async (
 	req: TypedRequestQuery<typeof guildIdValidator.query>,

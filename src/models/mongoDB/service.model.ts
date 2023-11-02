@@ -1,38 +1,22 @@
 import mongoose from "mongoose";
 import { CustomerDocument } from "./customer.model";
-import { SubscriptionDocument } from "./subscription.model";
+import { SpreadsheetDocument } from "./spreadsheet.models";
 
 export type ServiceDocument = mongoose.Document & {
 	guildId: string;
-	status: "payment_pending" | "active" | "inactive";
-	subscription: mongoose.PopulatedDoc<
-		SubscriptionDocument & mongoose.Document
-	>;
-	managingCustomers: Array<
-		mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>
-	>;
 	creator: mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>;
+	spreadsheet: mongoose.PopulatedDoc<SpreadsheetDocument & mongoose.Document>;
 };
 
 const ServiceSchema = new mongoose.Schema(
 	{
 		guildId: { type: String, required: true },
-		status: {
-			type: String,
-			enum: ["payment_pending", "active", "inactive"],
-			default: "inactive",
-			required: true,
-		},
-		subscription: {
+		spreadsheet: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Subscription",
+			ref: "spreadsheet",
+			unique: true,
+			sparse: true,
 		},
-		managingCustomers: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "Customer",
-			},
-		],
 		creator: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Customer",
