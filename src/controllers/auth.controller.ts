@@ -22,7 +22,7 @@ import {
 	generateOauthUrl,
 } from "../utils/oauth.utils";
 
-import { FRONTEND_CLIENT_URL } from "../config";
+import { FRONTEND_CLIENT_URL, OTP_EXPIRY_TIME } from "../config";
 
 export const callbackController = async (
 	req: TypedRequestQuery<typeof callbackValidator.query>,
@@ -117,7 +117,7 @@ export const sendOtpController = async (
 ) => {
 	try {
 		const otp = generateOtp();
-		const expiresAt = Date.now() + 1000 * 60 * 5;
+		const expiresAt = Date.now() + OTP_EXPIRY_TIME;
 		const otpHash = generateOtpHash(req.body.phone, otp, expiresAt);
 		await sendOtp(req.body.phone, otp);
 		res.send({

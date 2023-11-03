@@ -1,8 +1,8 @@
 import { Client, GatewayIntentBits , Events} from 'discord.js';
-// import buttonListener from './listeners/buttonListener';
-// import modalListener from './listeners/modalListener';
 import {TOKEN} from '../config';
-import commandListener from '../discord/listeners/commandListener';
+import commandListener from './listeners/command.listener';
+import buttonListener from './listeners/button';
+import modalListener from './listeners/modal';
 
 const token = TOKEN;
 
@@ -16,8 +16,8 @@ client.once('ready', c => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
-    // buttonListener(interaction);
-    // modalListener(interaction);
+    buttonListener(interaction);
+    modalListener(interaction);
     commandListener(interaction);
 
 });

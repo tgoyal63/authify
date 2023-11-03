@@ -4,6 +4,8 @@ import {
 	ButtonStyle,
 	ActionRowBuilder,
 	ChatInputCommandInteraction,
+	PermissionFlagsBits,
+	PermissionsBitField,
 } from "discord.js";
 import { getServicesOfDiscorsGuild } from "../../../services/service.service";
 
@@ -13,6 +15,16 @@ export default {
 		.setDescription("creates a otp button"),
 
 	async execute(interaction: ChatInputCommandInteraction) {
+		const permissions = interaction.member
+			?.permissions as PermissionsBitField;
+		if (!permissions.has(PermissionFlagsBits.Administrator)) {
+			interaction.reply({
+				content: "You need to be an admin to use this command",
+				ephemeral: true,
+			});
+			return;
+		}
+
 		const services = await getServicesOfDiscorsGuild(
 			interaction.guildId as string,
 		);
@@ -26,7 +38,7 @@ export default {
 		}
 
 		const button = new ButtonBuilder()
-			.setCustomId(`otp-phone-${service?._id}-${service.spreadsheet._id}`)
+			.setCustomId(`authifyButton-phone-${service?._id}`)
 			.setLabel("Authenticate with OTP")
 			.setStyle(ButtonStyle.Secondary);
 

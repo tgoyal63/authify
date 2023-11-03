@@ -1,6 +1,9 @@
 import crypto from "crypto";
 import axios from "axios";
-import { Fast2SMS_API_KEY, OTP_SECRET } from "../config";
+import { Fast2SMS_API_KEY, OTP_SECRET, OTP_EXPIRY_TIME } from "../config";
+import { Collection } from "discord.js";
+
+const otpCollection = new Collection<string, number>();
 
 /**
  * @returns a 6 digit OTP
@@ -10,6 +13,25 @@ export const generateOtp = () => {
 	const otp = crypto.randomInt(100000, 999999);
 	return otp;
 };
+
+export const generateOtpForDiscordId = (discordId: string) => {
+	const existing = otpCollection.get(discordId);
+	if (existing) return existing
+	const otp = generateOtp();
+	otpCollection.set(discordId, otp);
+	setTimeout(() => {
+		otpCollection.delete(discordId);
+	}, OTP_EXPIRY_TIME);
+	return otp;
+}
+
+export const verifyOtpForDiscordId = (discordId: string, otp: number) => {
+	const existing = otpCollection.get(discordId);
+	if(existing===otp)	otpCollection.delete(discordId);
+	return existing === otp;
+}
+
+
 
 /**
  *

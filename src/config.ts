@@ -28,6 +28,10 @@ export const JWT_SECRET = process.env["JWT_SECRET"] || "supersecretjwtsecret";
 
 export const GUILD_ID = process.env["GUILD_ID"] || "1165185944534667395";
 
+export const OTP_EXPIRY_TIME = parseInt(
+	process.env["OTP_EXPIRY_TIME"] || `${5 * 60 * 1000}`,
+);
+
 export async function DYNAMIC_REDIRECT_URI() {
 	if (process.env["NODE_ENV"] === "development")
 		return `${await ngrokURL}/callback`;

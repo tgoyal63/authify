@@ -20,6 +20,23 @@ export const getInternalSheets = async (spreadsheetId: string) => {
 	}
 };
 
+export const getColumnData = async (
+	spreadsheetId: string,
+	sheetName: string,
+	column: string,
+) => {
+	try {
+		const sheetData = await googleSheets.spreadsheets.values.get({
+			auth,
+			spreadsheetId,
+			range: `'${sheetName}'!${column}:${column}`,
+		});
+		return sheetData.data;
+	} catch (error) {
+		throw error;
+	}
+};
+
 export const getInternalSheet = async (
 	spreadsheetId: string,
 	sheetId: number,
@@ -59,7 +76,7 @@ export const getCell = async (
 		const sheetData = await googleSheets.spreadsheets.values.get({
 			auth,
 			spreadsheetId,
-			range: `${sheet?.properties?.title}!${cell}`,
+			range: `'${sheet?.properties?.title}'!${cell}`,
 		});
 		return sheetData.data.values?.[0]?.[0];
 	} catch (error) {
@@ -78,7 +95,7 @@ export const editCell = async (
 		const sheetData = await googleSheets.spreadsheets.values.update({
 			auth,
 			spreadsheetId,
-			range: `${sheet?.properties?.title}!${cell}`,
+			range: `'${sheet?.properties?.title}'!${cell}`,
 			valueInputOption: "USER_ENTERED",
 			includeValuesInResponse: true,
 			requestBody: {
@@ -89,4 +106,29 @@ export const editCell = async (
 	} catch (error) {
 		throw error;
 	}
+};
+
+export const editCellWithSheetName = async (
+	spreadsheetId: string,
+	sheetName: string,
+	cell: string,
+	value: string,
+) => {
+	try {
+		console.log("spreadsheetId", spreadsheetId);
+		console.log("cell", cell);
+		console.log("sheetName", sheetName);
+		console.log("value", value);
+		const sheetData = await googleSheets.spreadsheets.values.update({
+			auth,
+			spreadsheetId,
+			range: `'${sheetName}'!${cell}`,
+			valueInputOption: "USER_ENTERED",
+			includeValuesInResponse: true,
+			requestBody: {
+				values: [[value]],
+			},
+		});
+		return sheetData.data.updatedData?.values?.[0]?.[0];
+	} catch (error) {}
 };

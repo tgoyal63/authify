@@ -122,6 +122,7 @@ export const createServiceController = async (
 			req.body.sheetId,
 			req.body.guildId,
 			req.customer.id,
+			req.body.roleIds,
 		);
 
 		res.send({

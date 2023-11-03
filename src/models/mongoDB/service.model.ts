@@ -6,6 +6,7 @@ export type ServiceDocument = mongoose.Document & {
 	guildId: string;
 	creator: mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>;
 	spreadsheet: mongoose.PopulatedDoc<SpreadsheetDocument & mongoose.Document>;
+	roles: string[];
 };
 
 const ServiceSchema = new mongoose.Schema(
@@ -21,6 +22,7 @@ const ServiceSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "customer",
 		},
+		roles: [{ type: String , default: []}],
 	},
 	{ timestamps: true },
 );
