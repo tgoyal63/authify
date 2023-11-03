@@ -1,0 +1,51 @@
+name: AUTHIFY_PRODUCTION
+on:
+  push:
+    branches:
+      - production
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set Node.js 18.18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.18
+      - name: Install Dependencies
+        run: yarn install
+        
+      - name: Build 
+        run: yarn build
+
+      - name: Making ENV
+        run: |
+          touch .env
+          echo "${{ secrets.PROD_ENV }}" > .env
+
+      - name: Creating google credential json
+        run: |
+          touch google-credentials.json
+          echo "${{ secrets.PROD_GOOGLE }}" > google-credentials.json
+          
+      - name: Create a PEM FILE
+        run: 'echo "${{ secrets.PROD_PEM }}" >> authify_production.pem'
+        
+      - name: Giving permissions to PEM file
+        run: sudo chmod 400 authify_production.pem
+        
+      - name: Transfer Files to Remote Server
+        run: |
+          scp -i authify_production.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null .env google-credentials.json package.json yarn.lock .nvmrc ubuntu@ip-172-31-4-119:~/authify/
+          scp -i authify_production.pem -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null build ubuntu@ip-172-31-4-119:~/authify/
+          
+      - name: Run nvm use and yarn install --production
+        run: |
+          ssh -i authify_production.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@ip-172-31-4-119 'nvm use'
+          ssh -i authify_production.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@ip-172-31-4-119 'cd ~/authify && yarn install --production'
+      
+      - name: Restart PM2 Process
+        run: |
+          ssh -i authify_production.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@ip-172-31-4-119 'pm2 restart authify-prod'
+        
