@@ -42,7 +42,7 @@ jobs:
           
       - name: Yarn install --production
         run: |
-          ssh -i authify_production.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com 'cd ~/authify && yarn install --production'
+          ssh -i authify_production.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com 'cd ~/authify && /home/ubuntu/.nvm/versions/node/v18.18.0/bin/yarn install --production'
       
       - name: Restart PM2 Process
         run: |
