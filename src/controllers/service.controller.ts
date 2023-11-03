@@ -5,7 +5,7 @@ import {
 	getServicesOfDiscorsGuilds,
 	getNumberOfServicesInDiscordGuild,
 } from "../services/service.service";
-import { isAdmin, verifyGuild } from "../utils/discord.utils";
+import { deployCommandsToGuild, isAdmin, verifyGuild } from "../utils/discord.utils";
 import {
 	createServiceValidator,
 	guildIdValidator,
@@ -125,6 +125,8 @@ export const createServiceController = async (
 			req.body.roleIds,
 		);
 
+		await deployCommandsToGuild(req.body.guildId);
+		
 		res.send({
 			data: service,
 			message: "Service created successfully",

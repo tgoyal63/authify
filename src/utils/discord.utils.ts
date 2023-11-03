@@ -31,9 +31,9 @@ for (const folder of commandFolders) {
 
 const rest = new REST({ version: "10" }).setToken(TOKEN);
 
-export const deployCommandsToTestingServer = async (guildId: string) => {
+export const deployCommandsToGuild = async (guildId: string) => {
 	console.log(
-		`\nStarted refreshing ${commands.size} application (/) commands. [For Test Server]`,
+		`\nStarted refreshing ${commands.size} application (/) commands.`,
 	);
 	const data = (await rest.put(
 		Routes.applicationGuildCommands(CLIENT_ID, guildId),
