@@ -37,14 +37,14 @@ jobs:
         
       - name: Transfer Files to Remote Server
         run: |
-          scp -i authify_production.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null .env google-credentials.json package.json yarn.lock ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/authify/
-          scp -i authify_production.pem -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null build ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/authify/
+          scp -i authify_production.pem -o StrictHostKeyChecking=no .env google-credentials.json package.json yarn.lock ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/authify/
+          scp -i authify_production.pem -r -o StrictHostKeyChecking=no build ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/authify/
           
       - name: Yarn install --production
         run: |
-          ssh -i authify_production.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com 'cd ~/authify && /home/ubuntu/.nvm/versions/node/v18.18.0/bin/yarn install --production'
+          ssh -i authify_production.pem -o StrictHostKeyChecking=no ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com 'cd ~/authify && /home/ubuntu/.nvm/versions/node/v18.18.0/bin/yarn install --production'
       
       - name: Restart PM2 Process
         run: |
-          ssh -i authify_production.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com 'pm2 restart authify-prod'
+          ssh -i authify_production.pem -o StrictHostKeyChecking=no ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com 'pm2 restart authify-prod'
         
