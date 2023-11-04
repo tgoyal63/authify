@@ -27,7 +27,7 @@ jobs:
             - name: Creating google credential json
               run: |
                   touch google-credentials.json
-                  echo "${{ secrets.PROD_GOOGLE }}" > google-credentials.json
+                  echo "${{ secrets.PROD_GOOGLE }}" | base64 -d > google-credentials.json
 
             - name: Create a PEM FILE
               run: 'echo "${{ secrets.PROD_PEM }}" >> authify_production.pem'
