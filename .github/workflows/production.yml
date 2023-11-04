@@ -1,50 +1,46 @@
 name: AUTHIFY_PRODUCTION
 on:
-  push:
-    branches:
-      - production
+    push:
+        branches:
+            - production
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set Node.js 18.18.0
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.18.0
-      - name: Install Dependencies
-        run: yarn install
-        
-      - name: Build 
-        run: yarn build
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Set Node.js 18.18.0
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.18.0
+            - name: Install Dependencies
+              run: yarn install
 
-      - name: Making ENV
-        run: |
-          touch .env
-          echo "${{ secrets.PROD_ENV }}" > .env
+            - name: Build
+              run: yarn build
 
-      - name: Creating google credential json
-        run: |
-          touch google-credentials.json
-          echo "${{ secrets.PROD_GOOGLE }}" > google-credentials.json
-          
-      - name: Create a PEM FILE
-        run: 'echo "${{ secrets.PROD_PEM }}" >> authify_production.pem'
-        
-      - name: Giving permissions to PEM file
-        run: sudo chmod 400 authify_production.pem
-        
-      - name: Transfer Files to Remote Server
-        run: |
-          scp -i authify_production.pem -o StrictHostKeyChecking=no .env google-credentials.json package.json yarn.lock ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/authify/
-          scp -i authify_production.pem -r -o StrictHostKeyChecking=no build ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/authify/
-          
-      - name: Yarn install --production
-        run: |
-          ssh -i authify_production.pem -o StrictHostKeyChecking=no ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com 'cd ~/authify && /home/ubuntu/.nvm/versions/node/v18.18.0/bin/yarn install --production'
-      
-      - name: Restart PM2 Process
-        run: |
-          ssh -i authify_production.pem -o StrictHostKeyChecking=no ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com 'pm2 restart authify-prod'
-        
+            - name: Making ENV
+              run: |
+                  touch .env
+                  echo "${{ secrets.PROD_ENV }}" > .env
+
+            - name: Creating google credential json
+              run: |
+                  touch google-credentials.json
+                  echo "${{ secrets.PROD_GOOGLE }}" > google-credentials.json
+
+            - name: Create a PEM FILE
+              run: 'echo "${{ secrets.PROD_PEM }}" >> authify_production.pem'
+
+            - name: Giving permissions to PEM file
+              run: sudo chmod 400 authify_production.pem
+
+            - name: Transfer Files to Remote Server
+              run: |
+                  scp -i authify_production.pem -o StrictHostKeyChecking=no .env google-credentials.json package.json yarn.lock prod-deploy.sh ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/authify/
+                  scp -i authify_production.pem -r -o StrictHostKeyChecking=no build ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/authify/
+
+            - name: Yarn install --production
+              run: |
+                  ssh -i authify_production.pem -o StrictHostKeyChecking=no ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com 'chmod +x ~/authify/prod-deploy.sh'
+                  ssh -i authify_production.pem -o StrictHostKeyChecking=no ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com '~/authify/prod-deploy.sh'
