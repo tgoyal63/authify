@@ -14,9 +14,17 @@ export const getInternalSheetValidator = {
 export const sheetHeadersValidator = {
 	query: z.object({
 		spreadSheetUrl: z.string().regex(sheetRegex),
-		sheetId: z.string().regex(/^\d+$/),
+		sheetName: z.string(),
 		phoneCell: z.string().regex(cellOfASpreadSheetRegex),
 		emailCell: z.string().regex(cellOfASpreadSheetRegex),
 		discordIdCell: z.string().regex(cellOfASpreadSheetRegex),
+	}),
+};
+
+export const sheetHeadersValidatorV2 = {
+	query: z.object({
+		spreadSheetUrl: z.string().regex(sheetRegex),
+		sheetName: z.string(),
+		headerRow: z.string().regex(/^\d+$/),
 	}),
 };

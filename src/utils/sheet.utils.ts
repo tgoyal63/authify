@@ -52,13 +52,12 @@ export const getInternalSheet = async (
 	}
 };
 
-export const getSheetData = async (spreadsheetId: string, sheetId: number) => {
+export const getSheetData = async (spreadsheetId: string, sheetName: string) => {
 	try {
-		const sheet = await getInternalSheet(spreadsheetId, sheetId);
 		const sheetData = await googleSheets.spreadsheets.values.get({
 			auth,
 			spreadsheetId,
-			range: sheet?.properties?.title as string,
+			range: sheetName,
 		});
 		return sheetData.data;
 	} catch (error) {
@@ -68,15 +67,14 @@ export const getSheetData = async (spreadsheetId: string, sheetId: number) => {
 
 export const getCell = async (
 	spreadsheetId: string,
-	sheetId: number,
+	sheetName: string,
 	cell: string,
 ) => {
 	try {
-		const sheet = await getInternalSheet(spreadsheetId, sheetId);
 		const sheetData = await googleSheets.spreadsheets.values.get({
 			auth,
 			spreadsheetId,
-			range: `'${sheet?.properties?.title}'!${cell}`,
+			range: `'${sheetName}'!${cell}`,
 		});
 		return sheetData.data.values?.[0]?.[0];
 	} catch (error) {
@@ -86,39 +84,11 @@ export const getCell = async (
 
 export const editCell = async (
 	spreadsheetId: string,
-	sheetId: number,
-	cell: string,
-	value: string,
-) => {
-	try {
-		const sheet = await getInternalSheet(spreadsheetId, sheetId);
-		const sheetData = await googleSheets.spreadsheets.values.update({
-			auth,
-			spreadsheetId,
-			range: `'${sheet?.properties?.title}'!${cell}`,
-			valueInputOption: "USER_ENTERED",
-			includeValuesInResponse: true,
-			requestBody: {
-				values: [[value]],
-			},
-		});
-		return sheetData.data.updatedData?.values?.[0]?.[0];
-	} catch (error) {
-		throw error;
-	}
-};
-
-export const editCellWithSheetName = async (
-	spreadsheetId: string,
 	sheetName: string,
 	cell: string,
 	value: string,
 ) => {
 	try {
-		console.log("spreadsheetId", spreadsheetId);
-		console.log("cell", cell);
-		console.log("sheetName", sheetName);
-		console.log("value", value);
 		const sheetData = await googleSheets.spreadsheets.values.update({
 			auth,
 			spreadsheetId,
@@ -130,5 +100,7 @@ export const editCellWithSheetName = async (
 			},
 		});
 		return sheetData.data.updatedData?.values?.[0]?.[0];
-	} catch (error) {}
+	} catch (error) {
+		throw error;
+	}
 };

@@ -1,7 +1,7 @@
 import serviceModel from "../models/mongoDB/service.model";
 import spreadsheetModel from "../models/mongoDB/spreadsheet.models";
 import { sheetRegex } from "../inputValidators/sheet.validators";
-import { getColumnData, editCellWithSheetName } from "../utils/sheet.utils";
+import { getColumnData, editCell} from "../utils/sheet.utils";
 
 export const getNumberOfServicesInDiscordGuild = async (guildId: string) => {
 	const numberOfServices = await serviceModel.countDocuments({ guildId });
@@ -147,7 +147,7 @@ export const updateDiscordIdForPhoneNumberandFetchRoles = async (
 	const rowNumber = phoneNumbers.indexOf(phoneNumber);
 	if (rowNumber === -1) throw new Error("Phone Number not in sheet");
 
-	await editCellWithSheetName(
+	await editCell(
 		spreadsheet.spreadsheetId,
 		spreadsheet.sheetName,
 		`${spreadsheet.discordIdColumn}${rowNumber + 1}`,
