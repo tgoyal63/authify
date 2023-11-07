@@ -28,6 +28,7 @@ import { validateRequest } from "zod-express-middleware";
 
 import {
 	getInternalSheetController,
+	getSheetHeadersController,
 	validateSheetHeadersController,
 } from "./controllers/sheet.controller";
 
@@ -35,6 +36,7 @@ import { getAvailableRolesController } from "./controllers/discord.controller";
 import {
 	getInternalSheetValidator,
 	sheetHeadersValidator,
+	sheetHeadersValidatorV2,
 } from "./inputValidators/sheet.validators";
 
 import authMiddleware from "./middlewares/auth.middleware";
@@ -104,5 +106,12 @@ router.post(
 	authMiddleware,
 	validateRequest(createServiceValidator),
 	createServiceController,
+);
+
+router.get(
+	"/sheetHeaders",
+	authMiddleware,
+	validateRequest(sheetHeadersValidatorV2),
+	getSheetHeadersController,
 );
 export default router;

@@ -89,15 +89,15 @@ export const getSheetHeadersController = async (
 		const headerRow = parseInt(req.query.headerRow);
 		const headerRowData = await getColumnData(spreadSheetId, sheetName, headerRow.toString());
 		if (!headerRowData.values) throw new Error("No header data in sheet.");
-		console.log(headerRowData.values);
-
-
-
+		if (headerRowData.values.length !== 1)
+			throw new Error("Invalid Row");
+		if (!headerRowData.values[0])
+			throw new Error("Invalid Row");
+		if(headerRowData.values[0].length === 0)
+			throw new Error("Invalid Row");
 		res.send({
 			success: true,
-			data: {
-				
-			},
+			data: headerRowData.values[0],
 			message: "Sheet headers fetched succesfully.",
 		});
 	} catch (error: any) {
