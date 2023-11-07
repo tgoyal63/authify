@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyJWT } from "../utils/jwt.utils";
 import { getDiscordUser } from "../utils/oauth.utils";
-import { User } from "../types/common";
 
 export default async function (
 	req: Request,
@@ -33,7 +32,7 @@ export default async function (
 			getDiscordUser: async () => {
 				return await getDiscordUser(userData.accessToken);
 			},
-		} as User;
+		};
 
 		req.customer = customer;
 
