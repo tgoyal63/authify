@@ -17,7 +17,6 @@ import {
 
 import {
 	sendOtpValidator,
-	callbackValidator,
 	verifyOtpValidator,
 } from "./inputValidators/auth.validators";
 
@@ -46,7 +45,7 @@ router.get("/login", loginController); //will remove
 
 router.get("/oauth-link", getOauthController); //will be used instead of login
 
-router.get("/callback", validateRequest(callbackValidator), callbackController);
+router.get("/callback", callbackController);
 
 router.get("/services", authMiddleware, getServicesController);
 

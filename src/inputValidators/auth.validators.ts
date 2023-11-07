@@ -6,12 +6,6 @@ export const sendOtpValidator = {
 	}),
 };
 
-export const callbackValidator = {
-	query: z.object({
-		code: z.string(),
-		state: z.string(),
-	}),
-};
 
 export const verifyOtpValidator = {
 	body: z.object({

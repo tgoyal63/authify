@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
-import { TypedRequestBody, TypedRequestQuery } from "zod-express-middleware";
+import { TypedRequestBody } from "zod-express-middleware";
 import {
 	sendOtpValidator,
-	callbackValidator,
 	verifyOtpValidator,
 } from "../inputValidators/auth.validators";
 import { generateOtp, generateOtpHash, sendOtp } from "../utils/otp.utils";
@@ -25,16 +24,18 @@ import {
 import { FRONTEND_CLIENT_URL, OTP_EXPIRY_TIME } from "../config";
 
 export const callbackController = async (
-	req: TypedRequestQuery<typeof callbackValidator.query>,
+	req: Request,
 	res: Response,
 ) => {
 	try {
-		if (req.query.state === "bot")
+		const state = req.query["state"] as string;
+		const code = req.query["code"] as string;
+		if (state === "bot")
 			return res.redirect(
 				`${FRONTEND_CLIENT_URL}/messages/success-message-bot`,
 			);
-		if (!req.query.code) throw new Error("NoCodeProvided");
-		const token = await getTokens(req.query.code);
+		if (!code) throw new Error("Authentication Failed");
+		const token = await getTokens(code);
 		const user = await getDiscordUser(token.access_token);
 		const customer = await getCustomerByDiscordId(user.id);
 		if (!customer) {
