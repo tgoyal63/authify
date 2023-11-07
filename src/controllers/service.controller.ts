@@ -30,7 +30,9 @@ export const getServicesController = async (req: Request, res: Response) => {
 			message: "Services fetched successfully",
 			success: true,
 		});
-	} catch (error: any) {}
+	} catch (error: any) {
+		res.status(500).send({ message: error.message, success: false });
+	}
 };
 
 export const getGuildsOfUserController = async (
