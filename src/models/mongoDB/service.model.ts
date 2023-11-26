@@ -7,6 +7,8 @@ export type ServiceDocument = mongoose.Document & {
 	creator: mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>;
 	spreadsheet: mongoose.PopulatedDoc<SpreadsheetDocument & mongoose.Document>;
 	roles: string[];
+	isCustom: boolean;
+	customIntegrationId: string;
 };
 
 const ServiceSchema = new mongoose.Schema(
@@ -23,6 +25,20 @@ const ServiceSchema = new mongoose.Schema(
 			ref: "customer",
 		},
 		roles: [{ type: String , default: []}],
+		integrationType: {
+			type: String,
+			enum: ["tagMango", "sheets"],
+			default: "sheets",
+		},
+		customIntegrationId: {
+			type: String,
+			default: null
+		},
+		status: {
+			type: String,
+			enum: ["active", "inactive"], // ToDo: More Enums Here
+			default: "inactive",
+		},
 	},
 	{ timestamps: true },
 );

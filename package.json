@@ -42,6 +42,6 @@
 		"zod-express-middleware": "^1.4.0"
 	},
 	"engines": {
-		"node": "=18.18.0"
+		"node": "=18.18.*"
 	}
 }
