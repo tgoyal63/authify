@@ -1,4 +1,4 @@
-import "dotenv/config";
+
 import ngrok from "./utils/ngrok.util";
 
 let ngrokURL: Promise<string>;
