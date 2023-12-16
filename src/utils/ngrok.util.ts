@@ -7,7 +7,7 @@ export default async () => {
 		if (NGROK_AUTHTOKEN && NGROK_DOMAIN) {
 			const listener = await ngrok.connect({
 				addr: PORT,
-				authtoken_from_env: true,
+				authtoken: NGROK_AUTHTOKEN as string,
 				domain: NGROK_DOMAIN as string,
 			});
 			ngrokURL = listener.url() as string;
