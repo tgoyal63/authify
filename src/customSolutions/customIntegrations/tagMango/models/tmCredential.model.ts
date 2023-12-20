@@ -62,11 +62,11 @@ export const updateCredential = async ({
 		{ customer: customerId },
 		{ accessToken, refreshToken, phone },
 		{ new: true },
-	);
+	).exec();
 	return credential;
 };
 
 export const getCredential = async (customerId: string) => {
-	const credential = await model.findOne({ customer: customerId });
+	const credential = await model.findOne({ customer: customerId }).exec();
 	return credential;
 };

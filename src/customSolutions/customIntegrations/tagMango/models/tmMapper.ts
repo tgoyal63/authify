@@ -30,7 +30,7 @@ const TmMapperSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "customer",
 		},
-		metadata: { type: Object, required: true },
+		metadata: { type: Object },
 	},
 	{ timestamps: true },
 );

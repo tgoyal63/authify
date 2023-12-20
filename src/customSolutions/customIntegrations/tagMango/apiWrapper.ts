@@ -1,6 +1,5 @@
 import axios from "axios";
-// import { createMapper } from "./models/tmMapper";
-import { createCredential } from "./models/tmCredential.model";
+import { createCredential, getCredential } from "./models/tmCredential.model";
 
 export const getOtp = async (data: { phone: number; userAgent: string }) => {
 	const config = {
@@ -44,7 +43,8 @@ export const verifyOtp = async (
 	const response = await axios(config);
 	if (response.data.code !== 0) throw new Error(response.data);
 	let { result } = await response.data;
-	if (!result.accessToken || !result.refreshToken) throw new Error("Error in getting access token");
+	if (!result.accessToken || !result.refreshToken)
+		throw new Error("Error in getting access token");
 	const credential = await createCredential({
 		customerId,
 		accessToken: result.accessToken,
@@ -98,7 +98,7 @@ export const getSubscribers = async ({
 		maxBodyLength: Infinity,
 		url: "https://api-prod-new.tagmango.com/v2/subscribers",
 		headers: {
-			"x-whitelabel-host": "app.gangstaphilosophy.com",
+			"x-whitelabel-host": "app.gangstaphilosophy.com", // ToDo: Take this from the customer or from database
 			"Content-Type": "application/json",
 			authorization: `Bearer ${token}`,
 		},
@@ -114,15 +114,18 @@ export const getSubscribers = async ({
 	}
 };
 
-export const getAllActiveMangoes = async (token: string) => {
+export const getAllActiveMangoes = async (customerId: string) => {
+	const credential = await getCredential(customerId);
+	if (!credential)
+		throw new Error("User not found. Reconfigure tagMango integration.");
 	const config = {
 		method: "get",
 		maxBodyLength: Infinity,
 		url: "https://api-prod-new.tagmango.com/get-all-active-mangoes",
 		headers: {
-			"x-whitelabel-host": "app.gangstaphilosophy.com",
+			"x-whitelabel-host": "app.gangstaphilosophy.com", // ToDo: Take this from the customer or from database
 			"Content-Type": "application/json",
-			authorization: `Bearer ${token}`,
+			authorization: `Bearer ${credential?.accessToken}`,
 		},
 	};
 	let response = await axios(config);
