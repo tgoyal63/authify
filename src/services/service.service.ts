@@ -1,10 +1,10 @@
 import serviceModel from "../models/mongoDB/service.model";
 import spreadsheetModel from "../models/mongoDB/spreadsheet.models";
 import { sheetRegex } from "../inputValidators/sheet.validators";
-import { getColumnData, editCell} from "../utils/sheet.utils";
+import { getColumnData, editCell } from "../utils/sheet.utils";
 
 export const getNumberOfServicesInDiscordGuild = async (guildId: string) => {
-	const numberOfServices = await serviceModel.countDocuments({ guildId });
+	const numberOfServices = await serviceModel.countDocuments({ guildId }).exec();
 	return numberOfServices;
 };
 
@@ -12,12 +12,12 @@ export const getServicesOfDiscorsGuilds = async (guildIds: string[]) => {
 	const services = await serviceModel
 		.find({ guildId: { $in: guildIds } })
 		.populate(["spreadsheet", "creator"])
-		.lean();
+		.lean().exec();
 	return services;
 };
 
 export const getServicesOfDiscorsGuild = async (guildId: string) => {
-	const services = await serviceModel.find({ guildId });
+	const services = await serviceModel.find({ guildId }).exec();
 	return services;
 };
 
@@ -39,6 +39,9 @@ export const createService = async (
 		creator: creatorId,
 		roles,
 	});
+	if (!service) {
+		throw new Error("Error creating service");
+	}
 	const spreadsheet = await spreadsheetModel.create({
 		service: service._id,
 		phoneNumberColumn,
@@ -51,7 +54,14 @@ export const createService = async (
 		sheetId,
 		guildId,
 	});
-	service.spreadsheet = spreadsheet._id;
+	if (!spreadsheet) {
+		const deletedService = await serviceModel.findByIdAndDelete(
+			service._id,
+		).exec();
+		console.log("deletedService", deletedService);
+		throw new Error("Error creating spreadsheet");
+	}
+	// service.spreadsheet = spreadsheet._id;
 	await service.save();
 	return service;
 };
@@ -72,20 +82,14 @@ export const columnDataValuesToPhoneNumber = (
 };
 
 export const getColumnDataofService = async (serviceId: string) => {
-	const service = await serviceModel
-		.findById(serviceId)
-		.populate("spreadsheet");
+	const spreadsheet = await spreadsheetModel.findById(serviceId).exec();
 	if (
-		!service ||
-		!service.spreadsheet ||
-		!service.spreadsheet.spreadsheetId ||
-		!service.spreadsheet.sheetName ||
-		!service.spreadsheet.phoneNumberColumn
+		!spreadsheet ||
+		!spreadsheet.spreadsheetId ||
+		!spreadsheet.sheetName ||
+		!spreadsheet.phoneNumberColumn
 	)
-		throw new Error(
-			"Either Service Does Not exist or Spreadsheet is invalid",
-		);
-	const spreadsheet = service.spreadsheet;
+		throw new Error("Spreadsheet is invalid");
 	const phoneNumberColumn = spreadsheet.phoneNumberColumn;
 	const discordIdColumn = spreadsheet.discordIdColumn;
 	// const emailColumn = spreadsheet.emailColumn;
@@ -122,21 +126,17 @@ export const updateDiscordIdForPhoneNumberandFetchRoles = async (
 	phoneNumber: string,
 	discordId: string,
 ) => {
-	const service = await serviceModel
+	const spreadsheet = await spreadsheetModel
 		.findById(serviceId)
-		.populate("spreadsheet");
+		.populate("service");
 	if (
-		!service ||
-		!service.spreadsheet ||
-		!service.spreadsheet.spreadsheetId ||
-		!service.spreadsheet.sheetName ||
-		!service.spreadsheet.phoneNumberColumn ||
-		!service.spreadsheet.discordIdColumn
+		!spreadsheet ||
+		!spreadsheet.spreadsheetId ||
+		!spreadsheet.sheetName ||
+		!spreadsheet.phoneNumberColumn ||
+		!spreadsheet.discordIdColumn
 	)
-		throw new Error(
-			"Either Service Does Not exist or Spreadsheet is invalid",
-		);
-	const spreadsheet = service.spreadsheet;
+		throw new Error("Spreadsheet is invalid");
 	const phoneNumberData = await getColumnData(
 		spreadsheet.spreadsheetId,
 		spreadsheet.sheetName,
@@ -153,5 +153,5 @@ export const updateDiscordIdForPhoneNumberandFetchRoles = async (
 		`${spreadsheet.discordIdColumn}${rowNumber + 1}`,
 		discordId,
 	);
-	return service.roles;
+	return spreadsheet.service.roles;
 };
