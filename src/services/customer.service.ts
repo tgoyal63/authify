@@ -24,7 +24,7 @@ export const createCustomer = async (
 };
 
 export const getCustomerByDiscordId = async (discordId: string) => {
-	const customer = await customerModel.findOne({ discordId });
+	const customer = await customerModel.findOne({ discordId }).exec();
 	return customer;
 };
 
@@ -51,10 +51,10 @@ export const renewCredentials = async (
 			new: true,
 			upsert: true,
 		},
-	);
+	).exec();
 	return credentials;
 };
 
 export const updatePhone = async (id: string, phone: number) => {
-	customerModel.findByIdAndUpdate(id, { phone });
+	customerModel.findByIdAndUpdate(id, { phone }).exec();
 };

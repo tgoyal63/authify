@@ -40,8 +40,11 @@ import {
 } from "./inputValidators/sheet.validators";
 
 import authMiddleware from "./middlewares/auth.middleware";
+import customSolutionsRouter from "./customSolutions";
 
 const router = Router();
+
+router.use("/customSolutions", customSolutionsRouter);
 
 router.get("/login", loginController); //will remove
 
