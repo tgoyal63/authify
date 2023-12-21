@@ -1,9 +1,9 @@
-import { PermissionsBitField, Collection } from "discord.js";
-import client from "../discord";
-import { REST, Routes } from "discord.js";
-import { TOKEN, CLIENT_ID } from "../config";
 import fs from "fs";
 import path from "path";
+import { Collection, PermissionsBitField } from "discord.js";
+import { REST, Routes } from "discord.js";
+import { CLIENT_ID, TOKEN } from "../config";
+import client from "../discord";
 
 const commands = new Collection<string, any>();
 const currentFileUrl = import.meta.url;
@@ -15,7 +15,7 @@ for (const folder of commandFolders) {
 	const commandsPath: string = path.join(foldersPath, folder);
 	const commandFiles: string[] = fs
 		.readdirSync(commandsPath)
-		.filter((file) => (file.endsWith(".ts") || file.endsWith("js")));
+		.filter((file) => file.endsWith(".ts") || file.endsWith("js"));
 	for (const file of commandFiles) {
 		const filePath: string = path.join(commandsPath, file);
 		const { default: command } = await import(filePath);

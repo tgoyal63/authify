@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import axios from "axios";
-import { Fast2SMS_API_KEY, OTP_SECRET, OTP_EXPIRY_TIME } from "../config";
 import { Collection } from "discord.js";
+import { Fast2SMS_API_KEY, OTP_EXPIRY_TIME, OTP_SECRET } from "../config";
 
 const otpCollection = new Collection<string, number>();
 
@@ -16,22 +16,20 @@ export const generateOtp = () => {
 
 export const generateOtpForDiscordId = (discordId: string) => {
 	const existing = otpCollection.get(discordId);
-	if (existing) return existing
+	if (existing) return existing;
 	const otp = generateOtp();
 	otpCollection.set(discordId, otp);
 	setTimeout(() => {
 		otpCollection.delete(discordId);
 	}, OTP_EXPIRY_TIME);
 	return otp;
-}
+};
 
 export const verifyOtpForDiscordId = (discordId: string, otp: number) => {
 	const existing = otpCollection.get(discordId);
-	if(existing===otp)	otpCollection.delete(discordId);
+	if (existing === otp) otpCollection.delete(discordId);
 	return existing === otp;
-}
-
-
+};
 
 /**
  *
@@ -63,18 +61,15 @@ export const generateOtpHash = (
  */
 export const sendOtp = async (phone: number, otp: unknown): Promise<void> => {
 	try {
-		const response = await axios.get(
-			"https://www.fast2sms.com/dev/bulkV2",
-			{
-				params: {
-					authorization: Fast2SMS_API_KEY,
-					route: "otp",
-					numbers: phone,
-					variables_values: otp,
-					flash: "0",
-				},
+		const response = await axios.get("https://www.fast2sms.com/dev/bulkV2", {
+			params: {
+				authorization: Fast2SMS_API_KEY,
+				route: "otp",
+				numbers: phone,
+				variables_values: otp,
+				flash: "0",
 			},
-		);
+		});
 		if (response.data.return === false)
 			throw new Error(response.data.message[0] || "Fast2SMS API error.");
 	} catch (error: any) {

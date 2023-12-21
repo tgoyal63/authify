@@ -12,14 +12,13 @@ export const getOtp = async (data: { phone: number; userAgent: string }) => {
 		},
 		data,
 	};
-	let response = await axios(config);
-	let result = response.data;
+	const response = await axios(config);
+	const result = response.data;
 
 	if (result.code === 0 && result.type === "OK") {
 		return result;
-	} else {
-		throw result;
 	}
+	throw result;
 };
 
 export const verifyOtp = async (
@@ -42,7 +41,7 @@ export const verifyOtp = async (
 	};
 	const response = await axios(config);
 	if (response.data.code !== 0) throw new Error(response.data);
-	let { result } = await response.data;
+	const { result } = await response.data;
 	if (!result.accessToken || !result.refreshToken)
 		throw new Error("Error in getting access token");
 	const credential = await createCredential({
@@ -68,14 +67,13 @@ export const getAccessToken = async (refreshToken: string) => {
 		},
 		data: { refreshToken },
 	};
-	let response = await axios(config);
-	let result = response.data;
+	const response = await axios(config);
+	const result = response.data;
 
 	if (result.code === 0 && result.type === "OK") {
 		return result;
-	} else {
-		throw result;
 	}
+	throw result;
 };
 
 export const getSubscribers = async ({
@@ -104,14 +102,13 @@ export const getSubscribers = async ({
 		},
 		params: { page, type, pageSize, mangoes, term },
 	};
-	let response = await axios(config);
-	let result = response.data;
+	const response = await axios(config);
+	const result = response.data;
 
 	if (result.code === 0 && result.type === "OK") {
 		return result;
-	} else {
-		throw result;
 	}
+	throw result;
 };
 
 export const getAllActiveMangoes = async (customerId: string) => {
@@ -128,12 +125,11 @@ export const getAllActiveMangoes = async (customerId: string) => {
 			authorization: `Bearer ${credential?.accessToken}`,
 		},
 	};
-	let response = await axios(config);
-	let result = response.data;
+	const response = await axios(config);
+	const result = response.data;
 
 	if (result.code === 0 && result.type === "OK") {
 		return result;
-	} else {
-		throw result;
 	}
+	throw result;
 };

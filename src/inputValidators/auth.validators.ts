@@ -6,7 +6,6 @@ export const sendOtpValidator = {
 	}),
 };
 
-
 export const verifyOtpValidator = {
 	body: z.object({
 		phone: z.coerce.number().int().min(1000000000).max(9999999999),
