@@ -1,13 +1,12 @@
 import { z } from "zod";
 
-import { sheetRegex, cellOfASpreadSheetRegex } from "./sheet.validators";
+import { cellOfASpreadSheetRegex, sheetRegex } from "./sheet.validators";
 
 export const guildIdValidator = {
 	query: z.object({
 		guildId: z.string().regex(/^\d+$/).min(15).max(20),
 	}),
 };
-
 
 export const createServiceValidator = {
 	body: z.object({

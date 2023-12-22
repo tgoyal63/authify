@@ -1,5 +1,4 @@
 import { Response } from "express";
-import { getInternalSheets, getCell, editCell, getColumnData } from "../utils/sheet.utils";
 import { TypedRequestQuery } from "zod-express-middleware";
 import {
 	getInternalSheetValidator,
@@ -7,6 +6,12 @@ import {
 	sheetHeadersValidatorV2,
 	sheetRegex,
 } from "../inputValidators/sheet.validators";
+import {
+	editCell,
+	getCell,
+	getColumnData,
+	getInternalSheets,
+} from "../utils/sheet.utils";
 
 export const getInternalSheetController = async (
 	req: TypedRequestQuery<typeof getInternalSheetValidator.query>,
@@ -56,12 +61,13 @@ export const validateSheetHeadersController = async (
 		const emailCell = req.query.emailCell;
 		const discordIdCell = req.query.discordIdCell;
 
-		const [phoneNumberHeader, emailHeader, discordIdHeader] =
-			await Promise.all([
+		const [phoneNumberHeader, emailHeader, discordIdHeader] = await Promise.all(
+			[
 				getCell(spreadSheetId, sheetName, phoneNumberCell),
 				getCell(spreadSheetId, sheetName, emailCell),
 				editCell(spreadSheetId, sheetName, discordIdCell, "discord_id"),
-			]);
+			],
+		);
 
 		res.send({
 			success: true,
@@ -87,14 +93,15 @@ export const getSheetHeadersController = async (
 		const spreadSheetId = sheetSplit[1] as string;
 		const sheetName = req.query.sheetName;
 		const headerRow = parseInt(req.query.headerRow);
-		const headerRowData = await getColumnData(spreadSheetId, sheetName, headerRow.toString());
+		const headerRowData = await getColumnData(
+			spreadSheetId,
+			sheetName,
+			headerRow.toString(),
+		);
 		if (!headerRowData.values) throw new Error("No header data in sheet.");
-		if (headerRowData.values.length !== 1)
-			throw new Error("Invalid Row");
-		if (!headerRowData.values[0])
-			throw new Error("Invalid Row");
-		if(headerRowData.values[0].length === 0)
-			throw new Error("Invalid Row");
+		if (headerRowData.values.length !== 1) throw new Error("Invalid Row");
+		if (!headerRowData.values[0]) throw new Error("Invalid Row");
+		if (headerRowData.values[0].length === 0) throw new Error("Invalid Row");
 		res.send({
 			success: true,
 			data: headerRowData.values[0],
@@ -103,5 +110,4 @@ export const getSheetHeadersController = async (
 	} catch (error: any) {
 		res.status(500).send({ message: error.message, success: false });
 	}
-}
-
+};

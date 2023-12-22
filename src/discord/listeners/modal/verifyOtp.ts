@@ -1,10 +1,5 @@
-import {
-	updateDiscordIdForPhoneNumberandFetchRoles,
-} from "../../../services/service.service";
-import {
-	ModalSubmitInteraction,
-	GuildMemberRoleManager,
-} from "discord.js";
+import { GuildMemberRoleManager, ModalSubmitInteraction } from "discord.js";
+import { updateDiscordIdForPhoneNumberandFetchRoles } from "../../../services/service.service";
 
 import { verifyOtpForDiscordId } from "../../../utils/otp.utils";
 
@@ -15,19 +10,19 @@ export default async (
 ) => {
 	try {
 		await interaction.reply({
-			content: `Verifying OTP...`,
+			content: "Verifying OTP...",
 			ephemeral: true,
 		});
 		const otp = parseInt(interaction.fields.getTextInputValue("otp"));
 		const validOtp = verifyOtpForDiscordId(interaction.user.id, otp);
 		if (!validOtp) {
 			await interaction.editReply({
-				content: `Invalid OTP. Please try again.`,
+				content: "Invalid OTP. Please try again.",
 			});
 			return;
 		}
 		await interaction.editReply({
-			content: `OTP validated , assigning roles ...`,
+			content: "OTP validated , assigning roles ...",
 		});
 
 		const roles = await updateDiscordIdForPhoneNumberandFetchRoles(
@@ -37,7 +32,7 @@ export default async (
 		);
 		if (!roles) {
 			await interaction.editReply({
-				content: `No roles found for this phone number.`,
+				content: "No roles found for this phone number.",
 			});
 			return;
 		}
@@ -49,9 +44,8 @@ export default async (
 
 		await interaction.member.roles.add(roles);
 		await interaction.editReply({
-			content: `Roles assigned successfully.`,
+			content: "Roles assigned successfully.",
 		});
-
 	} catch (error: any) {
 		console.log(error);
 	}

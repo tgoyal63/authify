@@ -26,7 +26,7 @@ const ServiceSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "customer",
 		},
-		roles: [{ type: String , default: []}],
+		roles: [{ type: String, default: [] }],
 		integrationType: {
 			type: String,
 			enum: ["tagMango", "sheets"],
@@ -34,7 +34,7 @@ const ServiceSchema = new mongoose.Schema(
 		},
 		customIntegrationId: {
 			type: String,
-			default: null
+			default: null,
 		},
 		status: {
 			type: String,

@@ -39,11 +39,13 @@ export const createCredential = async ({
 	refreshToken: string;
 	phone: number;
 }) => {
-	const credential = await model.updateOne(
-		{ customer: customerId },
-		{ accessToken, refreshToken, phone },
-		{ upsert: true },
-	).exec();
+	const credential = await model
+		.updateOne(
+			{ customer: customerId },
+			{ accessToken, refreshToken, phone },
+			{ upsert: true },
+		)
+		.exec();
 	return credential;
 };
 
@@ -58,11 +60,13 @@ export const updateCredential = async ({
 	refreshToken: string;
 	phone: number;
 }) => {
-	const credential = await model.findOneAndUpdate(
-		{ customer: customerId },
-		{ accessToken, refreshToken, phone },
-		{ new: true },
-	).exec();
+	const credential = await model
+		.findOneAndUpdate(
+			{ customer: customerId },
+			{ accessToken, refreshToken, phone },
+			{ new: true },
+		)
+		.exec();
 	return credential;
 };
 

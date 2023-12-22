@@ -7,9 +7,7 @@ import { TmCredentialDocument } from "./tmCredential.model";
 export type TmMapperDocument = mongoose.Document & {
 	mango: string;
 	service: mongoose.PopulatedDoc<ServiceDocument & mongoose.Document>;
-	tmCredential: mongoose.PopulatedDoc<
-		TmCredentialDocument & mongoose.Document
-	>;
+	tmCredential: mongoose.PopulatedDoc<TmCredentialDocument & mongoose.Document>;
 	customer: mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>;
 	metadata: Object;
 };
@@ -60,19 +58,25 @@ export const createMapper = async ({
 	return mapper;
 };
 
-export const getMapper = async ({
-	mango,
-	serviceId,
-	customerId,
-}: {
-	mango?: string;
-	serviceId?: string;
-	customerId?: string;
-}, populated = true) => {
-	const mapper = await model.findOne({
+export const getMapper = async (
+	{
 		mango,
-		service: serviceId,
-		customer: customerId,
-	}).populate(populated ? ["service", "tmCredential", "customer"] : []).exec();
+		serviceId,
+		customerId,
+	}: {
+		mango?: string;
+		serviceId?: string;
+		customerId?: string;
+	},
+	populated = true,
+) => {
+	const mapper = await model
+		.findOne({
+			mango,
+			service: serviceId,
+			customer: customerId,
+		})
+		.populate(populated ? ["service", "tmCredential", "customer"] : [])
+		.exec();
 	return mapper;
 };

@@ -44,7 +44,7 @@ export const getInternalSheet = async (
 	try {
 		const allSheets = await getInternalSheets(spreadsheetId);
 		const sheet = allSheets?.find(
-			(sheet) => sheet.properties?.sheetId == sheetId,
+			(sheet) => sheet.properties?.sheetId === sheetId,
 		);
 		return sheet;
 	} catch (error) {
@@ -52,7 +52,10 @@ export const getInternalSheet = async (
 	}
 };
 
-export const getSheetData = async (spreadsheetId: string, sheetName: string) => {
+export const getSheetData = async (
+	spreadsheetId: string,
+	sheetName: string,
+) => {
 	try {
 		const sheetData = await googleSheets.spreadsheets.values.get({
 			auth,

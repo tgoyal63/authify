@@ -1,14 +1,14 @@
+import { Response } from "express";
 import { TypedRequestQuery } from "zod-express-middleware";
 import client from "../discord";
-import { Response } from "express";
 import { guildIdValidator } from "../inputValidators/service.validators";
 
 export const getAvailableRolesController = async (
 	req: TypedRequestQuery<typeof guildIdValidator.query>,
 	res: Response,
 ) => {
-try {
-		const guildId = req.query["guildId"] as string;
+	try {
+		const guildId = req.query.guildId as string;
 		const guild = await client.guilds.fetch(guildId);
 		if (!guild.members.me?.roles.highest)
 			throw new Error("Bot is not in the guild");
@@ -30,7 +30,7 @@ try {
 			data: roles,
 			message: "Roles fetched successfully",
 		});
-} catch (error:any) {
-	res.status(500).send({ message: error.message, success: false });
-}
+	} catch (error: any) {
+		res.status(500).send({ message: error.message, success: false });
+	}
 };

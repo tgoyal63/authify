@@ -1,15 +1,19 @@
 import { Request, Response } from "express";
 import { TypedRequestBody, TypedRequestQuery } from "zod-express-middleware";
-import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
-import {
-	getServicesOfDiscorsGuilds,
-	getNumberOfServicesInDiscordGuild,
-} from "../services/service.service";
-import { deployCommandsToGuild, isAdmin, verifyGuild } from "../utils/discord.utils";
 import {
 	createServiceValidator,
 	guildIdValidator,
 } from "../inputValidators/service.validators";
+import {
+	getNumberOfServicesInDiscordGuild,
+	getServicesOfDiscorsGuilds,
+} from "../services/service.service";
+import {
+	deployCommandsToGuild,
+	isAdmin,
+	verifyGuild,
+} from "../utils/discord.utils";
+import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
 
 import { createService } from "../services/service.service";
 
@@ -96,8 +100,9 @@ export const createServiceController = async (
 	res: Response,
 ) => {
 	try {
-		const numberOfExistingServices =
-			await getNumberOfServicesInDiscordGuild(req.body.guildId);
+		const numberOfExistingServices = await getNumberOfServicesInDiscordGuild(
+			req.body.guildId,
+		);
 		if (numberOfExistingServices >= 1)
 			throw new Error("You can only have one service per guild");
 
@@ -128,7 +133,7 @@ export const createServiceController = async (
 		);
 
 		await deployCommandsToGuild(req.body.guildId);
-		
+
 		res.send({
 			data: service,
 			message: "Service created successfully",

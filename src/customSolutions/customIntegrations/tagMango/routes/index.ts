@@ -1,8 +1,8 @@
-import { Router } from "express";
-import { getOtp, verifyOtp, getAllActiveMangoes } from "../apiWrapper";
-import { createMapper } from "../models/tmMapper";
-import { getCredential } from "../models/tmCredential.model";
 import serviceModel from "@/models/mongoDB/service.model";
+import { Router } from "express";
+import { getAllActiveMangoes, getOtp, verifyOtp } from "../apiWrapper";
+import { getCredential } from "../models/tmCredential.model";
+import { createMapper } from "../models/tmMapper";
 const router = Router();
 
 // Get OTP
@@ -13,7 +13,7 @@ router.post("/getOtp", async (req, res) => {
 			phone,
 			userAgent: req.headers["user-agent"] || "",
 		};
-		let result = await getOtp(data);
+		const result = await getOtp(data);
 		if (result.code === 0 && result.type === "OK") {
 			res.status(200).send({
 				message: "OTP sent successfully",

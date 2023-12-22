@@ -28,9 +28,9 @@ Function for validation: User Email -> Fetch Data -> Check Status=active, Store 
 
 const subscriberValidator = (term: string | number) => {
 	return true;
-}
+};
 
-export default <CustomSolution> {
+export default (<CustomSolution>{
 	id: "gangstaPhilosophy",
 	router,
 	config: {
@@ -38,5 +38,5 @@ export default <CustomSolution> {
 		isPhoneVerificationEnabled: true,
 		isDiscordOauthEnabled: false,
 	},
-	subscriberValidator
-};
+	subscriberValidator,
+});

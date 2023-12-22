@@ -1,10 +1,10 @@
-import { getColumnDataofService } from "../../../services/service.service";
 import {
 	ActionRowBuilder,
-	ModalSubmitInteraction,
 	ButtonBuilder,
 	ButtonStyle,
+	ModalSubmitInteraction,
 } from "discord.js";
+import { getColumnDataofService } from "../../../services/service.service";
 
 import { generateOtpForDiscordId, sendOtp } from "../../../utils/otp.utils";
 
@@ -24,14 +24,15 @@ export default async (
 		});
 		if (existing) {
 			await interaction.reply({
-				content: `You have already registered.`,
+				content: "You have already registered.",
 				ephemeral: true,
 			});
 			return;
 		}
 		if (!phoneNumbers.includes(phone)) {
 			await interaction.reply({
-				content: `Phone number not found in course. Please contact the course admin.`,
+				content:
+					"Phone number not found in course. Please contact the course admin.",
 				ephemeral: true,
 			});
 			return;
@@ -58,7 +59,7 @@ export default async (
 		);
 
 		await interaction.reply({
-			content: `An OTP has been sent to your phone number.`,
+			content: "An OTP has been sent to your phone number.",
 			ephemeral: true,
 			components: [actionRow],
 		});
@@ -66,15 +67,14 @@ export default async (
 		console.log(error);
 		if (error.message === "Fast2SMS API error.") {
 			await interaction.reply({
-				content: `An error occurred while sending OTP. Please try again.`,
+				content: "An error occurred while sending OTP. Please try again.",
 				ephemeral: true,
 			});
 			return;
-		} else {
-			await interaction.reply({
-				content: `An error occurred. Please try again.`,
-				ephemeral: true,
-			});
 		}
+		await interaction.reply({
+			content: "An error occurred. Please try again.",
+			ephemeral: true,
+		});
 	}
 };
