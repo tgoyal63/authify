@@ -1,5 +1,5 @@
-import customerModel from "../models/mongoDB/customer.model";
 import credentialsModel from "../models/mongoDB/credentials.model";
+import customerModel from "../models/mongoDB/customer.model";
 
 export const createCustomer = async (
 	discordId: string,
@@ -37,21 +37,23 @@ export const renewCredentials = async (
 ) => {
 	const customer = await getCustomerByDiscordId(discordId);
 	if (!customer) throw new Error("CustomerNotFound");
-	const credentials = await credentialsModel.findOneAndUpdate(
-		{
-			customer: customer._id,
-		},
-		{
-			refreshToken,
-			accessToken,
-			scope,
-			expiresAt: Date.now() + expires_in * 1000,
-		},
-		{
-			new: true,
-			upsert: true,
-		},
-	).exec();
+	const credentials = await credentialsModel
+		.findOneAndUpdate(
+			{
+				customer: customer._id,
+			},
+			{
+				refreshToken,
+				accessToken,
+				scope,
+				expiresAt: Date.now() + expires_in * 1000,
+			},
+			{
+				new: true,
+				upsert: true,
+			},
+		)
+		.exec();
 	return credentials;
 };
 

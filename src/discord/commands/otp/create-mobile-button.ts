@@ -1,11 +1,11 @@
 import {
-	SlashCommandBuilder,
+	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
-	ActionRowBuilder,
 	ChatInputCommandInteraction,
 	PermissionFlagsBits,
 	PermissionsBitField,
+	SlashCommandBuilder,
 } from "discord.js";
 import { getServicesOfDiscorsGuild } from "../../../services/service.service";
 
@@ -15,8 +15,7 @@ export default {
 		.setDescription("creates a otp button"),
 
 	async execute(interaction: ChatInputCommandInteraction) {
-		const permissions = interaction.member
-			?.permissions as PermissionsBitField;
+		const permissions = interaction.member?.permissions as PermissionsBitField;
 		if (!permissions.has(PermissionFlagsBits.Administrator)) {
 			interaction.reply({
 				content: "You need to be an admin to use this command",
@@ -50,7 +49,7 @@ export default {
 		});
 
 		interaction?.channel?.send({
-			content: `** **`,
+			content: "** **",
 			components: [row],
 		});
 	},

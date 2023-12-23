@@ -1,10 +1,12 @@
+import { sheetRegex } from "../inputValidators/sheet.validators";
 import serviceModel from "../models/mongoDB/service.model";
 import spreadsheetModel from "../models/mongoDB/spreadsheet.models";
-import { sheetRegex } from "../inputValidators/sheet.validators";
-import { getColumnData, editCell } from "../utils/sheet.utils";
+import { editCell, getColumnData } from "../utils/sheet.utils";
 
 export const getNumberOfServicesInDiscordGuild = async (guildId: string) => {
-	const numberOfServices = await serviceModel.countDocuments({ guildId }).exec();
+	const numberOfServices = await serviceModel
+		.countDocuments({ guildId })
+		.exec();
 	return numberOfServices;
 };
 
@@ -12,7 +14,8 @@ export const getServicesOfDiscorsGuilds = async (guildIds: string[]) => {
 	const services = await serviceModel
 		.find({ guildId: { $in: guildIds } })
 		.populate(["spreadsheet", "creator"])
-		.lean().exec();
+		.lean()
+		.exec();
 	return services;
 };
 
@@ -55,9 +58,9 @@ export const createService = async (
 		guildId,
 	});
 	if (!spreadsheet) {
-		const deletedService = await serviceModel.findByIdAndDelete(
-			service._id,
-		).exec();
+		const deletedService = await serviceModel
+			.findByIdAndDelete(service._id)
+			.exec();
 		console.log("deletedService", deletedService);
 		throw new Error("Error creating spreadsheet");
 	}
@@ -74,9 +77,9 @@ export const columnDataValuesToPhoneNumber = (
 			if (!row[0]) return null;
 			const num = row[0].replace(/\D/g, "");
 			if (num.length === 10) return num as string;
-			else if (num.length === 12 && num.startsWith("91"))
+			if (num.length === 12 && num.startsWith("91"))
 				return num.slice(2) as string;
-			else return null;
+			return null;
 		}) || []
 	);
 };
@@ -112,8 +115,7 @@ export const getColumnDataofService = async (serviceId: string) => {
 		// ),
 	]);
 
-	const discordIds =
-		discordIdData.values?.map((row) => row[0] as string) || [];
+	const discordIds = discordIdData.values?.map((row) => row[0] as string) || [];
 
 	if (!phoneNumberData.values) return { phoneNumbers: [], discordIds };
 

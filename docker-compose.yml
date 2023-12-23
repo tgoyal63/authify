@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+    bun-production:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "5000:5000"
+        env_file: 
+            - .env
+        # environment:
+            # - NODE_ENV=
+            # - PORT=
+            # - TOKEN=
+            # - CLIENT_ID=
+            # - CLIENT_SECRET=
+            # - REDIRECT_URI=
+            # - MONGO_URI=
+            # - AWS_ACCESS_KEY_ID=
+            # - AWS_SECRET_ACCESS_KEY=
+            # - AWS_REGION=
+            # - EMAIL_FROM=
+            # - NGROK_AUTHTOKEN=
+            # - NGROK_DOMAIN=
+            # - Fast2SMS_API_KEY=
+
+

@@ -7,8 +7,8 @@ import {
 import { generateOtp, generateOtpHash, sendOtp } from "../utils/otp.utils";
 
 import {
-	getCustomerByDiscordId,
 	createCustomer,
+	getCustomerByDiscordId,
 	renewCredentials,
 	updatePhone,
 } from "../services/customer.service";
@@ -16,20 +16,17 @@ import {
 import { signJWT } from "../utils/jwt.utils";
 
 import {
-	getTokens,
-	getDiscordUser,
 	generateOauthUrl,
+	getDiscordUser,
+	getTokens,
 } from "../utils/oauth.utils";
 
 import { FRONTEND_CLIENT_URL, OTP_EXPIRY_TIME } from "../config";
 
-export const callbackController = async (
-	req: Request,
-	res: Response,
-) => {
+export const callbackController = async (req: Request, res: Response) => {
 	try {
-		const state = req.query["state"] as string;
-		const code = req.query["code"] as string;
+		const state = req.query.state as string;
+		const code = req.query.code as string;
 		if (state === "bot")
 			return res.redirect(
 				`${FRONTEND_CLIENT_URL}/messages/success-message-bot`,
@@ -39,8 +36,7 @@ export const callbackController = async (
 		const user = await getDiscordUser(token.access_token);
 		const customer = await getCustomerByDiscordId(user.id);
 		if (!customer) {
-			if (!user.verified || !user.email)
-				throw new Error("EmailNotVerified");
+			if (!user.verified || !user.email) throw new Error("EmailNotVerified");
 			const createdCustomer = await createCustomer(
 				user.id,
 				user.username,

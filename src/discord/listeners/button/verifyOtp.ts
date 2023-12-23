@@ -24,9 +24,7 @@ export default async (
 		.setLabel("OTP")
 		.setStyle(TextInputStyle.Short);
 
-	const row = new ActionRowBuilder<TextInputBuilder>().addComponents(
-		otpInput,
-	);
+	const row = new ActionRowBuilder<TextInputBuilder>().addComponents(otpInput);
 	modal.addComponents(row);
 	await interaction.showModal(modal);
 };

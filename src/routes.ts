@@ -1,18 +1,18 @@
 import { Router } from "express";
 import {
 	callbackController,
+	getOauthController,
 	loginController,
 	sendOtpController,
 	verifyOtpController,
-	getOauthController,
 } from "./controllers/auth.controller";
 
 import {
-	getServicesController,
-	getGuildsOfUserController,
-	generateBotInviteLinkController,
-	verifyBotInGuildController,
 	createServiceController,
+	generateBotInviteLinkController,
+	getGuildsOfUserController,
+	getServicesController,
+	verifyBotInGuildController,
 } from "./controllers/service.controller";
 
 import {
@@ -20,11 +20,11 @@ import {
 	verifyOtpValidator,
 } from "./inputValidators/auth.validators";
 
+import { validateRequest } from "zod-express-middleware";
 import {
 	createServiceValidator,
 	guildIdValidator,
 } from "./inputValidators/service.validators";
-import { validateRequest } from "zod-express-middleware";
 
 import {
 	getInternalSheetController,
@@ -39,8 +39,8 @@ import {
 	sheetHeadersValidatorV2,
 } from "./inputValidators/sheet.validators";
 
-import authMiddleware from "./middlewares/auth.middleware";
 import customSolutionsRouter from "./customSolutions";
+import authMiddleware from "./middlewares/auth.middleware";
 
 const router = Router();
 
