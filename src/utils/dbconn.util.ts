@@ -21,6 +21,7 @@ async function dbConnect(): Promise<void> {
 			throw error;
 		});
 	} catch (error) {
+		console.error("Connection error:", error);
 		throw error;
 	}
 }

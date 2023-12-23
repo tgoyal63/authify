@@ -32,7 +32,7 @@ export default async (
 		);
 		if (!roles) {
 			await interaction.editReply({
-				content: "No roles found for this phone number.",
+				content: "No roles found for this service.",
 			});
 			return;
 		}

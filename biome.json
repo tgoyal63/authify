@@ -11,5 +11,9 @@
 				"useConst": "warn"
 			}
 		}
+	},
+	"formatter": {
+		"indentWidth": 4,
+		"indentStyle": "space"
 	}
 }

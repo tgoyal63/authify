@@ -1,11 +1,9 @@
 import mongoose from "mongoose";
 import { CustomerDocument } from "./customer.model";
-// import { SpreadsheetDocument } from "./spreadsheet.models";
 
 export type ServiceDocument = mongoose.Document & {
 	guildId: string;
 	creator: mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>;
-	// spreadsheet: mongoose.PopulatedDoc<SpreadsheetDocument & mongoose.Document>;
 	roles: string[];
 	isCustom: boolean;
 	customIntegrationId: string;
@@ -16,12 +14,6 @@ export type ServiceDocument = mongoose.Document & {
 const ServiceSchema = new mongoose.Schema(
 	{
 		guildId: { type: String, required: true },
-		// spreadsheet: {
-		// 	type: mongoose.Schema.Types.ObjectId,
-		// 	ref: "spreadsheet",
-		// 	unique: true,
-		// 	sparse: true,
-		// }, // already in spreadsheet model, not required here
 		creator: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "customer",

@@ -47,7 +47,7 @@ export const deployCommandsToGuild = async (guildId: string) => {
 	);
 };
 
-export const isAdmin = (permissions: number) => {
+export const isAdmin = (permissions: string) => {
 	const discordPermissions = new PermissionsBitField(BigInt(permissions));
 	return discordPermissions.has(PermissionsBitField.Flags.Administrator);
 };

@@ -7,7 +7,7 @@ import {
 	PermissionsBitField,
 	SlashCommandBuilder,
 } from "discord.js";
-import { getServicesOfDiscorsGuild } from "../../../services/service.service";
+import { getServicesOfDiscordGuild } from "../../../services/service.service";
 
 export default {
 	data: new SlashCommandBuilder()
@@ -24,7 +24,7 @@ export default {
 			return;
 		}
 
-		const services = await getServicesOfDiscorsGuild(
+		const services = await getServicesOfDiscordGuild(
 			interaction.guildId as string,
 		);
 		const service = services[0];
