@@ -13,6 +13,7 @@ import {
     getGuildsOfUserController,
     getServicesController,
     verifyBotInGuildController,
+    getServiceDataController,
 } from "./controllers/service.controller";
 
 import {
@@ -53,6 +54,8 @@ router.get("/oauth-link", getOauthController); //will be used instead of login
 router.get("/callback", callbackController);
 
 router.get("/services", authMiddleware, getServicesController);
+
+router.get("/service/:serviceId", authMiddleware, getServiceDataController);
 
 router.get("/guilds", authMiddleware, getGuildsOfUserController);
 

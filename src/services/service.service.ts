@@ -1,7 +1,10 @@
 import { sheetRegex } from "../inputValidators/sheet.validators";
 import serviceModel from "../models/mongoDB/service.model";
-import spreadsheetModel from "../models/mongoDB/spreadsheet.models";
 import { editCell, getColumnData } from "../utils/sheet.utils";
+import {
+    createSpreadsheet,
+    getSpreadsheetDataFromServiceId,
+} from "./spreadsheet.service";
 
 export const getNumberOfServicesInDiscordGuild = async (guildId: string) => {
     const numberOfServices = await serviceModel
@@ -10,18 +13,25 @@ export const getNumberOfServicesInDiscordGuild = async (guildId: string) => {
     return numberOfServices;
 };
 
-export const getServicesOfDiscorsGuilds = async (guildIds: string[]) => {
+export const getServicesOfDiscordGuilds = async (guildIds: string[]) => {
     const services = await serviceModel
         .find({ guildId: { $in: guildIds } })
-        .populate(["spreadsheet", "creator"])
         .lean()
         .exec();
     return services;
 };
 
-export const getServicesOfDiscorsGuild = async (guildId: string) => {
+export const getServicesOfDiscordGuild = async (guildId: string) => {
     const services = await serviceModel.find({ guildId }).exec();
     return services;
+};
+
+export const getServiceData = async (serviceId: string) => {
+    const service = await serviceModel
+        .findById(serviceId)
+        .populate("creator")
+        .exec();
+    return service;
 };
 
 export const createService = async (
@@ -45,7 +55,7 @@ export const createService = async (
     if (!service) {
         throw new Error("Error creating service");
     }
-    const spreadsheet = await spreadsheetModel.create({
+    const spreadsheet = await createSpreadsheet({
         service: service._id,
         phoneNumberColumn,
         emailColumn,
@@ -64,8 +74,6 @@ export const createService = async (
         console.log("deletedService", deletedService);
         throw new Error("Error creating spreadsheet");
     }
-    // service.spreadsheet = spreadsheet._id;
-    await service.save();
     return service;
 };
 
@@ -85,7 +93,7 @@ export const columnDataValuesToPhoneNumber = (
 };
 
 export const getColumnDataofService = async (serviceId: string) => {
-    const spreadsheet = await spreadsheetModel.findById(serviceId).exec();
+    const spreadsheet = await getSpreadsheetDataFromServiceId(serviceId);
     if (
         !spreadsheet ||
         !spreadsheet.spreadsheetId ||
@@ -129,9 +137,7 @@ export const updateDiscordIdForPhoneNumberandFetchRoles = async (
     phoneNumber: string,
     discordId: string,
 ) => {
-    const spreadsheet = await spreadsheetModel
-        .findById(serviceId)
-        .populate("service");
+    const spreadsheet = await getSpreadsheetDataFromServiceId(serviceId);
     if (
         !spreadsheet ||
         !spreadsheet.spreadsheetId ||

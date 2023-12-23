@@ -6,7 +6,9 @@ import {
 } from "../inputValidators/service.validators";
 import {
     getNumberOfServicesInDiscordGuild,
-    getServicesOfDiscorsGuilds,
+    getServicesOfDiscordGuilds,
+    createService,
+    getServiceData,
 } from "../services/service.service";
 import {
     deployCommandsToGuild,
@@ -14,14 +16,13 @@ import {
     verifyGuild,
 } from "../utils/discord.utils";
 import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
-
-import { createService } from "../services/service.service";
+import { getSpreadsheetDataFromServiceId } from "@/services/spreadsheet.service";
 
 export const getServicesController = async (req: Request, res: Response) => {
     try {
         const guilds = await getGuilds(req.customer.accessToken);
         const guildIds = guilds.map((guild) => guild.id);
-        const services = await getServicesOfDiscorsGuilds(guildIds);
+        const services = await getServicesOfDiscordGuilds(guildIds);
         const servicesWithGuilds = services.map((service) => {
             const guild = guilds.find((guild) => guild.id === service.guildId);
             return {
@@ -36,6 +37,41 @@ export const getServicesController = async (req: Request, res: Response) => {
         });
     } catch (error: any) {
         res.status(500).send({ message: error.message, success: false });
+    }
+};
+
+export const getServiceDataController = async (req: Request, res: Response) => {
+    try {
+        // serviceID -> serviceData. populate(creator) -> integrationType // 1st method implemented
+        const service = await getServiceData(req.params.serviceId);
+        // integrationType -> sheets -> sheetData-> sheetsData // 1st method --> populate(service) by taking integrationType in Request --> 2nd method
+        if (!service) throw new Error("Service not found");
+        if (service.integrationType === "sheets") {
+            const sheetData = await getSpreadsheetDataFromServiceId(
+                service._id,
+            );
+            if (!sheetData) throw new Error("Sheet not found");
+            return res.send({
+                data: {
+                    service: service,
+                    sheet: sheetData,
+                },
+                message: "Service fetched successfully",
+                success: true,
+            });
+        }
+        if (service.integrationType === "tagMango") {
+            return res.send({
+                message: "TagMango integration is not supported yet",
+                success: false,
+            });
+        }
+        return res.send({
+            message: "Invalid integration type",
+            success: false,
+        });
+    } catch (error: any) {
+        return res.status(500).send({ message: error.message, success: false });
     }
 };
 
