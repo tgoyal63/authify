@@ -15,27 +15,27 @@ const commandFolders = fs.readdirSync(foldersPath);
  * @description Imports a command file and adds it to the commands collection
  */
 async function importCommand(filePath: string) {
-	try {
-		const { default: command } = await import(filePath);
-		if ("data" in command && "execute" in command) {
-			commands.set(command.data.name, command);
-		} else {
-			console.log(
-				`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
-			);
-		}
-	} catch (error) {
-		console.error(`Error importing ${filePath}: ${error}`);
-	}
+    try {
+        const { default: command } = await import(filePath);
+        if ("data" in command && "execute" in command) {
+            commands.set(command.data.name, command);
+        } else {
+            console.log(
+                `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
+            );
+        }
+    } catch (error) {
+        console.error(`Error importing ${filePath}: ${error}`);
+    }
 }
 
 for (const folder of commandFolders) {
-	const commandsPath = path.join(foldersPath, folder);
-	const commandFiles = fs.readdirSync(commandsPath);
-	for (const file of commandFiles) {
-		const filePath = path.join(commandsPath, file);
-		await importCommand(filePath);
-	}
+    const commandsPath = path.join(foldersPath, folder);
+    const commandFiles = fs.readdirSync(commandsPath);
+    for (const file of commandFiles) {
+        const filePath = path.join(commandsPath, file);
+        await importCommand(filePath);
+    }
 }
 
 export default commands;

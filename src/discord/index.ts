@@ -7,22 +7,22 @@ import modalListener from "./listeners/modal";
 const token = TOKEN;
 
 const client = new Client({
-	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 });
 
 client.once("ready", (c) => {
-	console.log(`Ready! Logged in as ${c.user.tag}`);
+    console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
-	buttonListener(interaction);
-	modalListener(interaction);
-	commandListener(interaction);
+    buttonListener(interaction);
+    modalListener(interaction);
+    commandListener(interaction);
 });
 
 client.on(Events.Error, (e) => {
-	client.login(token);
-	console.log("Reconnecting...", e);
+    client.login(token);
+    console.log("Reconnecting...", e);
 });
 
 process.on("unhandledRejection", console.error);
