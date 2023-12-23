@@ -4,9 +4,9 @@ import gangstaPhilosophy from "./gangstaPhilosophy";
 const router = Router();
 
 router.use(
-	`/${gangstaPhilosophy.id}`,
-	authMiddleware,
-	gangstaPhilosophy.router,
+    `/${gangstaPhilosophy.id}`,
+    authMiddleware,
+    gangstaPhilosophy.router,
 );
 
 export default router;

@@ -1,42 +1,43 @@
 import { Router } from "express";
 import {
-	callbackController,
-	getOauthController,
-	loginController,
-	sendOtpController,
-	verifyOtpController,
+    callbackController,
+    getOauthController,
+    loginController,
+    sendOtpController,
+    verifyOtpController,
 } from "./controllers/auth.controller";
 
 import {
-	createServiceController,
-	generateBotInviteLinkController,
-	getGuildsOfUserController,
-	getServicesController,
-	verifyBotInGuildController,
+    createServiceController,
+    generateBotInviteLinkController,
+    getGuildsOfUserController,
+    getServicesController,
+    verifyBotInGuildController,
+    getServiceDataController,
 } from "./controllers/service.controller";
 
 import {
-	sendOtpValidator,
-	verifyOtpValidator,
+    sendOtpValidator,
+    verifyOtpValidator,
 } from "./inputValidators/auth.validators";
 
 import { validateRequest } from "zod-express-middleware";
 import {
-	createServiceValidator,
-	guildIdValidator,
+    createServiceValidator,
+    guildIdValidator,
 } from "./inputValidators/service.validators";
 
 import {
-	getInternalSheetController,
-	getSheetHeadersController,
-	validateSheetHeadersController,
+    getInternalSheetController,
+    getSheetHeadersController,
+    validateSheetHeadersController,
 } from "./controllers/sheet.controller";
 
 import { getAvailableRolesController } from "./controllers/discord.controller";
 import {
-	getInternalSheetValidator,
-	sheetHeadersValidator,
-	sheetHeadersValidatorV2,
+    getInternalSheetValidator,
+    sheetHeadersValidator,
+    sheetHeadersValidatorV2,
 } from "./inputValidators/sheet.validators";
 
 import customSolutionsRouter from "./customSolutions";
@@ -54,67 +55,69 @@ router.get("/callback", callbackController);
 
 router.get("/services", authMiddleware, getServicesController);
 
+router.get("/service/:serviceId", authMiddleware, getServiceDataController);
+
 router.get("/guilds", authMiddleware, getGuildsOfUserController);
 
 router.get(
-	"/generate-bot-invite-link",
-	validateRequest(guildIdValidator),
-	authMiddleware,
-	generateBotInviteLinkController,
+    "/generate-bot-invite-link",
+    validateRequest(guildIdValidator),
+    authMiddleware,
+    generateBotInviteLinkController,
 );
 
 router.get(
-	"/verify-bot-in-guild",
-	validateRequest(guildIdValidator),
-	authMiddleware,
-	verifyBotInGuildController,
+    "/verify-bot-in-guild",
+    validateRequest(guildIdValidator),
+    authMiddleware,
+    verifyBotInGuildController,
 );
 
 router.post(
-	"/send-otp",
-	authMiddleware,
-	validateRequest(sendOtpValidator),
-	sendOtpController,
+    "/send-otp",
+    authMiddleware,
+    validateRequest(sendOtpValidator),
+    sendOtpController,
 );
 router.post(
-	"/verify-otp",
-	authMiddleware,
-	validateRequest(verifyOtpValidator),
-	verifyOtpController,
+    "/verify-otp",
+    authMiddleware,
+    validateRequest(verifyOtpValidator),
+    verifyOtpController,
 );
 
 router.get(
-	"/internal-sheets",
-	authMiddleware,
-	validateRequest(getInternalSheetValidator),
-	getInternalSheetController,
+    "/internal-sheets",
+    authMiddleware,
+    validateRequest(getInternalSheetValidator),
+    getInternalSheetController,
 );
 
 router.get(
-	"/validate-sheet-headers",
-	authMiddleware,
-	validateRequest(sheetHeadersValidator),
-	validateSheetHeadersController,
+    "/validate-sheet-headers",
+    authMiddleware,
+    validateRequest(sheetHeadersValidator),
+    validateSheetHeadersController,
 );
 
 router.get(
-	"/discord-roles",
-	authMiddleware,
-	validateRequest(guildIdValidator),
-	getAvailableRolesController,
+    "/discord-roles",
+    authMiddleware,
+    validateRequest(guildIdValidator),
+    getAvailableRolesController,
 );
 
 router.post(
-	"/create-service",
-	authMiddleware,
-	validateRequest(createServiceValidator),
-	createServiceController,
+    "/create-service",
+    authMiddleware,
+    validateRequest(createServiceValidator),
+    createServiceController,
 );
 
 router.get(
-	"/sheetHeaders",
-	authMiddleware,
-	validateRequest(sheetHeadersValidatorV2),
-	getSheetHeadersController,
+    "/sheetHeaders",
+    authMiddleware,
+    validateRequest(sheetHeadersValidatorV2),
+    getSheetHeadersController,
 );
 export default router;

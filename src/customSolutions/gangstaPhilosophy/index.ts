@@ -2,7 +2,7 @@ import router from "../customIntegrations/tagMango/routes";
 import { CustomSolution } from "../types";
 
 router.get("/", async (req, res) => {
-	res.send("Welcome to Gangsta Philosophy!");
+    res.send("Welcome to Gangsta Philosophy!");
 });
 
 /**
@@ -27,16 +27,16 @@ Function for validation: User Email -> Fetch Data -> Check Status=active, Store 
 */
 
 const subscriberValidator = (term: string | number) => {
-	return true;
+    return true;
 };
 
 export default (<CustomSolution>{
-	id: "gangstaPhilosophy",
-	router,
-	config: {
-		isEmailVerificationEnabled: true,
-		isPhoneVerificationEnabled: true,
-		isDiscordOauthEnabled: false,
-	},
-	subscriberValidator,
+    id: "gangstaPhilosophy",
+    router,
+    config: {
+        isEmailVerificationEnabled: true,
+        isPhoneVerificationEnabled: true,
+        isDiscordOauthEnabled: false,
+    },
+    subscriberValidator,
 });

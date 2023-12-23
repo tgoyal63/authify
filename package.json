@@ -24,8 +24,8 @@
 		"start": "env NODE_ENV=production bun src/index.ts",
 		"lint:check": "biome lint ./src",
 		"lint:fix": "biome check --apply ./src",
-		"formate:check": "bunx @biomejs/biome format ./src",
-		"formate:fix": "bunx @biomejs/biome format --write ./src"
+		"format:check": "bunx @biomejs/biome format ./src",
+		"format:fix": "bunx @biomejs/biome format --write ./src"
 	},
 	"dependencies": {
 		"axios": "^1.5.1",
