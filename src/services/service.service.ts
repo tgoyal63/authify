@@ -45,12 +45,14 @@ export const createService = async (
     guildId: string,
     creatorId: string,
     roles: string[],
+    integrationType: "sheets" | "tagMango",
 ) => {
     const spreadsheetId = spreadsheetUrl.match(sheetRegex)?.[1] as string;
     const service = await serviceModel.create({
         guildId,
         creator: creatorId,
         roles,
+        integrationType,
     });
     if (!service) {
         throw new Error("Error creating service");

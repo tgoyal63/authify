@@ -165,6 +165,7 @@ export const createServiceController = async (
             req.body.guildId,
             req.customer.id,
             req.body.roleIds,
+            req.body.integrationType,
         );
 
         await deployCommandsToGuild(req.body.guildId);

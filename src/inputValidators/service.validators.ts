@@ -19,5 +19,6 @@ export const createServiceValidator = {
         roleIds: z.array(z.string().regex(/^\d+$/).min(15).max(20)),
         guildId: z.string().regex(/^\d+$/).min(15).max(20),
         sheetName: z.string().min(1).max(25),
+        integrationType: z.enum(["sheets", "tagMango"]),
     }),
 };
