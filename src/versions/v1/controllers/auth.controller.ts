@@ -4,7 +4,11 @@ import {
     sendOtpValidator,
     verifyOtpValidator,
 } from "../inputValidators/auth.validators";
-import { generateOtp, generateOtpHash, sendOtp } from "../utils/otp.utils";
+import {
+    generateOtp,
+    generateOtpHash,
+    sendOtp,
+} from "../../../utils/otp.utils";
 
 import {
     createCustomer,
@@ -13,15 +17,15 @@ import {
     updatePhone,
 } from "../services/customer.service";
 
-import { signJWT } from "../utils/jwt.utils";
+import { signJWT } from "../../../utils/jwt.utils";
 
 import {
     generateOauthUrl,
     getDiscordUser,
     getTokens,
-} from "../utils/oauth.utils";
+} from "../../../utils/oauth.utils";
 
-import { FRONTEND_CLIENT_URL, OTP_EXPIRY_TIME } from "../config";
+import { FRONTEND_CLIENT_URL, OTP_EXPIRY_TIME } from "../../../config";
 
 export const callbackController = async (req: Request, res: Response) => {
     try {

@@ -7,7 +7,7 @@ export type SubscriptionDocument = mongoose.Document & {
     service: mongoose.PopulatedDoc<ServiceDocument & mongoose.Document>;
     active: boolean;
     startsAt: Date;
-    EndsAt: Date;
+    endsAt: Date;
 };
 
 const SubscriptionSchema = new mongoose.Schema(

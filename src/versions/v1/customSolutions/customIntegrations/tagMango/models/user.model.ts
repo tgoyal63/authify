@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ServiceDocument } from "../../../../models/mongoDB/service.model";
+import { ServiceDocument } from "../../../../../../models/mongoDB/service.model";
 
 export type TmSubscriberDocument = mongoose.Document & {
     discordId: string;

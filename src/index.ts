@@ -2,7 +2,7 @@ import cors from "cors";
 import express from "express";
 import { FRONTEND_CLIENT_URL, GUILD_ID, PORT } from "./config";
 import { loginToBot } from "./discord";
-import routes from "./routes";
+import routes from "./versions/v1/routes";
 import dbConnect from "./utils/dbconn.util";
 import { deployCommandsToGuild } from "./utils/discord.utils";
 
@@ -18,7 +18,7 @@ const corsOptions = {
 const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(routes);
+app.use("/v1", routes);
 
 dbConnect().then(() => {
     app.listen(PORT, async () => {

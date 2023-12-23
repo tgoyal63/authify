@@ -1,4 +1,4 @@
-import spreadsheetModel from "../models/mongoDB/spreadsheet.models";
+import spreadsheetModel from "../../../models/mongoDB/spreadsheet.models";
 import mongoose from "mongoose";
 
 export const getSpreadsheetDataFromServiceId = async (serviceId: string) => {

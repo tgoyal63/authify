@@ -4,7 +4,7 @@ import {
     ButtonStyle,
     ModalSubmitInteraction,
 } from "discord.js";
-import { getColumnDataofService } from "../../../services/service.service";
+import { getColumnDataofService } from "../../../versions/v1/services/service.service";
 
 import { generateOtpForDiscordId, sendOtp } from "../../../utils/otp.utils";
 

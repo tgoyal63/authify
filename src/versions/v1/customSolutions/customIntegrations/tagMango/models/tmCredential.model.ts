@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { CustomerDocument } from "../../../../models/mongoDB/customer.model";
+import { CustomerDocument } from "../../../../../../models/mongoDB/customer.model";
 
 export type TmCredentialDocument = mongoose.Document & {
     customer: mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>;

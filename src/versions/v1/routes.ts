@@ -41,7 +41,7 @@ import {
 } from "./inputValidators/sheet.validators";
 
 import customSolutionsRouter from "./customSolutions";
-import authMiddleware from "./middlewares/auth.middleware";
+import authMiddleware from "../../middlewares/auth.middleware";
 
 const router = Router();
 

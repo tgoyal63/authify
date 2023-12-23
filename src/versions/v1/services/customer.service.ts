@@ -1,5 +1,5 @@
-import credentialsModel from "../models/mongoDB/credentials.model";
-import customerModel from "../models/mongoDB/customer.model";
+import credentialsModel from "../../../models/mongoDB/credentials.model";
+import customerModel from "../../../models/mongoDB/customer.model";
 
 export const createCustomer = async (
     discordId: string,

@@ -19,14 +19,15 @@ const ServiceSchema = new mongoose.Schema(
             ref: "customer",
         },
         roles: [{ type: String, default: [] }],
+        isCustom: { type: Boolean, default: false },
+        customIntegrationId: {
+            type: String,
+            default: null,
+        },
         integrationType: {
             type: String,
             enum: ["tagMango", "sheets"],
             default: "sheets",
-        },
-        customIntegrationId: {
-            type: String,
-            default: null,
         },
         status: {
             type: String,

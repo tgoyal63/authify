@@ -1,6 +1,6 @@
 import { sheetRegex } from "../inputValidators/sheet.validators";
-import serviceModel from "../models/mongoDB/service.model";
-import { editCell, getColumnData } from "../utils/sheet.utils";
+import serviceModel from "../../../models/mongoDB/service.model";
+import { editCell, getColumnData } from "../../../utils/sheet.utils";
 import {
     createSpreadsheet,
     getSpreadsheetDataFromServiceId,
