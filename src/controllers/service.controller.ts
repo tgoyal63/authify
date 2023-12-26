@@ -22,9 +22,12 @@ export const getServicesController = async (req: Request, res: Response) => {
     try {
         const guilds = await getGuilds(req.customer.accessToken);
         if (!guilds) throw new Error("Error fetching guilds");
-        const guildIds = guilds
-            .filter((guild) => guild.permissions && isAdmin(guild.permissions))
-            .map((guild) => guild.id);
+        const guildIds = [];
+        for (const guild of guilds) {
+            if (guild.permissions && isAdmin(guild.permissions)) {
+                guildIds.push(guild.id);
+            }
+        }
         const services = await getServicesOfDiscordGuilds(guildIds);
         const servicesWithGuilds = services.map((service) => {
             const guild = guilds.find((guild) => guild.id === service.guildId);
