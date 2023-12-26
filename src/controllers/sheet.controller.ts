@@ -11,7 +11,7 @@ import {
     getCell,
     getColumnData,
     getInternalSheets,
-} from "../../../utils/sheet.utils";
+} from "../utils/sheet.utils";
 
 export const getInternalSheetController = async (
     req: TypedRequestQuery<typeof getInternalSheetValidator.query>,

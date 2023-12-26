@@ -10,7 +10,7 @@ Shwetabh Gangwar
 Already Done:
 - OTP send utility -> Phone
 - Dashboard
-- 
+
 To be Done:
 - Onboarding of Subscribers:
 	- Understand TagMango API

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { CustomerDocument } from "./customer.model";
 
 export type ServiceDocument = mongoose.Document & {
+    name: string;
     guildId: string;
     creator: mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>;
     roles: string[];
@@ -13,6 +14,7 @@ export type ServiceDocument = mongoose.Document & {
 
 const ServiceSchema = new mongoose.Schema(
     {
+        name: { type: String, required: true },
         guildId: { type: String, required: true },
         creator: {
             type: mongoose.Schema.Types.ObjectId,
@@ -22,7 +24,8 @@ const ServiceSchema = new mongoose.Schema(
         isCustom: { type: Boolean, default: false },
         customIntegrationId: {
             type: String,
-            default: null,
+            unique: true,
+            sparse: true,
         },
         integrationType: {
             type: String,

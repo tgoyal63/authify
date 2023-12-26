@@ -1,6 +1,6 @@
 import { sheetRegex } from "../inputValidators/sheet.validators";
-import serviceModel from "../../../models/mongoDB/service.model";
-import { editCell, getColumnData } from "../../../utils/sheet.utils";
+import serviceModel from "../models/mongoDB/service.model";
+import { editCell, getColumnData } from "../utils/sheet.utils";
 import {
     createSpreadsheet,
     getSpreadsheetDataFromServiceId,
@@ -35,6 +35,7 @@ export const getServiceData = async (serviceId: string) => {
 };
 
 export const createService = async (
+    name: string,
     phoneNumberColumn: string,
     emailColumn: string,
     discordIdColumn: string,
@@ -49,6 +50,7 @@ export const createService = async (
 ) => {
     const spreadsheetId = spreadsheetUrl.match(sheetRegex)?.[1] as string;
     const service = await serviceModel.create({
+        name,
         guildId,
         creator: creatorId,
         roles,

@@ -7,7 +7,7 @@ import {
     PermissionsBitField,
     SlashCommandBuilder,
 } from "discord.js";
-import { getServicesOfDiscordGuild } from "../../../versions/v1/services/service.service";
+import { getServicesOfDiscordGuild } from "../../../services/service.service";
 
 export default {
     data: new SlashCommandBuilder()
