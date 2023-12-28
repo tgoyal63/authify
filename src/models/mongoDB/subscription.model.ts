@@ -7,7 +7,9 @@ export type SubscriptionDocument = mongoose.Document & {
     service: mongoose.PopulatedDoc<ServiceDocument & mongoose.Document>;
     active: boolean;
     startsAt: Date;
-    EndsAt: Date;
+    endsAt: Date;
+    testingMode: boolean; // Testing mode is used to test the integration without paying for it
+    testingModeEndsAt: Date | null;
 };
 
 const SubscriptionSchema = new mongoose.Schema(
@@ -25,6 +27,8 @@ const SubscriptionSchema = new mongoose.Schema(
         active: { type: Boolean, required: true },
         startsAt: { type: Date, required: true },
         endsAt: { type: Date, required: true },
+        testingMode: { type: Boolean, default: false },
+        testingModeEndsAt: { type: Date, default: null },
     },
     { timestamps: true },
 );

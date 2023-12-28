@@ -10,7 +10,6 @@ export type TmSubscriberDocument = mongoose.Document & {
     linkedDiscord: boolean;
     expiresAt: Date;
     service: mongoose.PopulatedDoc<ServiceDocument & mongoose.Document>;
-    customIntegrationId: string;
     discordLinkTimestamp: Date;
 };
 
@@ -28,7 +27,6 @@ const TmSubscriberSchema = new mongoose.Schema(
             ref: "service",
             required: true,
         },
-        customIntegrationId: { type: String, required: true },
         discordLinkTimestamp: { type: Date, required: true },
     },
     { timestamps: true },

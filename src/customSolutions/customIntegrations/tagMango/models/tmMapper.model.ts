@@ -11,7 +11,9 @@ export type TmMapperDocument = mongoose.Document & {
         TmCredentialDocument & mongoose.Document
     >;
     customer: mongoose.PopulatedDoc<CustomerDocument & mongoose.Document>;
-    metadata: Object;
+    xWhiteLabelHost: string;
+    metadata: object;
+    customIntegrationId: string;
 };
 
 const TmMapperSchema = new mongoose.Schema(
@@ -30,7 +32,9 @@ const TmMapperSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "customer",
         },
+        xWhiteLabelHost: { type: String, required: true },
         metadata: { type: Object },
+        customIntegrationId: { type: String, required: true },
     },
     { timestamps: true },
 );

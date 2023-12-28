@@ -1,6 +1,5 @@
 import { GuildMemberRoleManager, ModalSubmitInteraction } from "discord.js";
 import { updateDiscordIdForPhoneNumberandFetchRoles } from "../../../services/service.service";
-
 import { verifyOtpForDiscordId } from "../../../utils/otp.utils";
 
 export default async (

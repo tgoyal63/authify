@@ -16,12 +16,18 @@ import {
     verifyGuild,
 } from "../utils/discord.utils";
 import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
-import { getSpreadsheetDataFromServiceId } from "@/services/spreadsheet.service";
+import { getSpreadsheetDataFromServiceId } from "../services/spreadsheet.service";
 
 export const getServicesController = async (req: Request, res: Response) => {
     try {
         const guilds = await getGuilds(req.customer.accessToken);
-        const guildIds = guilds.map((guild) => guild.id);
+        if (!guilds) throw new Error("Error fetching guilds");
+        const guildIds = [];
+        for (const guild of guilds) {
+            if (guild.permissions && isAdmin(guild.permissions)) {
+                guildIds.push(guild.id);
+            }
+        }
         const services = await getServicesOfDiscordGuilds(guildIds);
         const servicesWithGuilds = services.map((service) => {
             const guild = guilds.find((guild) => guild.id === service.guildId);
@@ -155,6 +161,7 @@ export const createServiceController = async (
             throw new Error("All the cells should be in the same row");
 
         const service = await createService(
+            req.body.name,
             phoneNumberColumn,
             emailColumn,
             discordIdColumn,

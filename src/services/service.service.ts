@@ -35,6 +35,7 @@ export const getServiceData = async (serviceId: string) => {
 };
 
 export const createService = async (
+    name: string,
     phoneNumberColumn: string,
     emailColumn: string,
     discordIdColumn: string,
@@ -49,6 +50,7 @@ export const createService = async (
 ) => {
     const spreadsheetId = spreadsheetUrl.match(sheetRegex)?.[1] as string;
     const service = await serviceModel.create({
+        name,
         guildId,
         creator: creatorId,
         roles,

@@ -11,6 +11,7 @@ export type SpreadsheetDocument = mongoose.Document & {
     spreadsheetId: string;
     spreadsheetUrl: string;
     sheetId: number;
+    guildId: string;
 };
 
 const spreadsheetSchema = new mongoose.Schema(
