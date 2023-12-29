@@ -4,7 +4,10 @@ import mongoose from "mongoose";
 export const getSpreadsheetDataFromServiceId = async (serviceId: string) => {
     const spreadsheet = await spreadsheetModel
         .findOne({ service: serviceId })
-        .populate("service")
+        .populate({
+            path: "service",
+            populate: { path: "creator", select: "username -_id" },
+        })
         .exec();
     return spreadsheet;
 };

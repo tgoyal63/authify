@@ -82,7 +82,7 @@ export const createService = async (
 };
 
 export const columnDataValuesToPhoneNumber = (
-    phoneNumberDataValues: any[][],
+    phoneNumberDataValues: string[][],
 ) => {
     return (
         phoneNumberDataValues?.map((row) => {
