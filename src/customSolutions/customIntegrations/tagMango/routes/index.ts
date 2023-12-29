@@ -66,7 +66,7 @@ router.get("/mangoes", async (req, res) => {
     try {
         const credential = await getCredential(req.customer.id);
         if (!credential) throw new Error("Credential not found");
-        const mangoes = await getAllActiveMangoes(req.customer.id);
+        const mangoes = await getAllActiveMangoes(credential);
         if (!mangoes.result) throw new Error("No mangoes found");
 
         res.status(200).send({
@@ -86,11 +86,14 @@ router.get("/mangoes", async (req, res) => {
 router.post("/addCustomSolution", async (req, res) => {
     try {
         const { mango, serviceId } = req.body;
+
         const service = await serviceModel.findById(serviceId).exec();
         if (!service) throw new Error("Service not found");
+        
         const mangoes = await getAllActiveMangoes(req.customer.id);
         if (!mangoes.result.find((m: any) => m._id === mango))
             throw new Error("Mango not found in TagMango");
+        
         const mapper = await createMapper({
             mango,
             serviceId,
@@ -102,6 +105,7 @@ router.post("/addCustomSolution", async (req, res) => {
             message: "Service created successfully",
             data: mapper,
         });
+        
     } catch (error) {
         console.log(error);
         res.status(500).send({

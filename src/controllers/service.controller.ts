@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { TypedRequestBody, TypedRequestQuery } from "zod-express-middleware";
 import {
     createServiceValidator,
+    createTMServiceValidator,
     guildIdValidator,
 } from "../inputValidators/service.validators";
 import {
@@ -9,6 +10,7 @@ import {
     getServicesOfDiscordGuilds,
     createService,
     getServiceData,
+    createTMService,
 } from "../services/service.service";
 import {
     deployCommandsToGuild,
@@ -179,7 +181,38 @@ export const createServiceController = async (
             req.body.guildId,
             req.customer.id,
             req.body.roleIds,
-            req.body.integrationType,
+        );
+
+        await deployCommandsToGuild(req.body.guildId);
+
+        res.send({
+            data: service,
+            message: "Service created successfully",
+            success: true,
+        });
+    } catch (error: any) {
+        res.status(500).send({ message: error.message, success: false });
+    }
+};
+
+
+export const createTMServiceController = async (
+    req: TypedRequestBody<typeof createTMServiceValidator.body>,
+    res: Response,
+) => {
+    try {
+        // const numberOfExistingServices =
+        //     await getNumberOfServicesInDiscordGuild(req.body.guildId);
+        // if (numberOfExistingServices >= 1)
+        //     throw new Error("You can only have one service per guild");
+
+        // ToDO: Authentication for TM Service Creation for subscribed users only
+
+        const service = await createTMService(
+            req.body.name,
+            req.body.guildId,
+            req.customer.id,
+            req.body.roleIds
         );
 
         await deployCommandsToGuild(req.body.guildId);
