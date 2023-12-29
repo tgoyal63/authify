@@ -15,7 +15,7 @@ import {
     isAdmin,
     verifyGuild,
 } from "../utils/discord.utils";
-import { generateBotInviteLink, getGuilds, getGuild } from "../utils/oauth.utils";
+import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
 import { getSpreadsheetDataFromServiceId } from "../services/spreadsheet.service";
 
 export const getServicesController = async (req: Request, res: Response) => {
