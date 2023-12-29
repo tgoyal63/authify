@@ -57,10 +57,17 @@ export const getServiceDataController = async (req: Request, res: Response) => {
                 service._id,
             );
             if (!sheetData) throw new Error("Sheet not found");
+            
+            const guilds = await getGuilds(req.customer.accessToken);
+            if (!guilds) throw new Error("Error fetching guilds");
+            
+            const guild = guilds.find((guild) => guild.id === service.guildId);
+            if (!guild) throw new Error("Guild not found");
+            
             return res.send({
                 data: {
-                    service: service,
                     sheet: sheetData,
+                    guild,
                 },
                 message: "Service fetched successfully",
                 success: true,
