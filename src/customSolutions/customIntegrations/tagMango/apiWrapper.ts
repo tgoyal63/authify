@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createCredential, getCredential } from "./models/tmCredential.model";
+import { TmCredentialDocument, createCredential } from "./models/tmCredential.model";
 
 export const getOtp = async (data: { phone: number; userAgent: string }) => {
     const config = {
@@ -111,10 +111,7 @@ export const getSubscribers = async ({
     throw result;
 };
 
-export const getAllActiveMangoes = async (customerId: string) => {
-    const credential = await getCredential(customerId);
-    if (!credential)
-        throw new Error("User not found. Reconfigure tagMango integration.");
+export const getAllActiveMangoes = async (credential: TmCredentialDocument) => {
     const config = {
         method: "get",
         maxBodyLength: Infinity,

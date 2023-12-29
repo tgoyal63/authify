@@ -34,6 +34,26 @@ export const getServiceData = async (serviceId: string) => {
     return service;
 };
 
+export const createTMService = async (
+    name: string,
+    guildId: string,
+    creatorId: string,
+    roles: string[],
+) => {
+    const service = await serviceModel.create({
+        name,
+        guildId,
+        creator: creatorId,
+        roles,
+        isCustom: true,
+        integrationType: "tagMango",
+    });
+    if (!service) {
+        throw new Error("Error creating service");
+    }
+    return service;
+}
+
 export const createService = async (
     name: string,
     phoneNumberColumn: string,
@@ -46,7 +66,6 @@ export const createService = async (
     guildId: string,
     creatorId: string,
     roles: string[],
-    integrationType: "sheets" | "tagMango",
 ) => {
     const spreadsheetId = spreadsheetUrl.match(sheetRegex)?.[1] as string;
     const service = await serviceModel.create({
@@ -54,7 +73,7 @@ export const createService = async (
         guildId,
         creator: creatorId,
         roles,
-        integrationType,
+        integrationType: "sheets",
     });
     if (!service) {
         throw new Error("Error creating service");

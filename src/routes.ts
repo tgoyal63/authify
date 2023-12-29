@@ -14,6 +14,7 @@ import {
     getServicesController,
     verifyBotInGuildController,
     getServiceDataController,
+    createTMServiceController,
 } from "./controllers/service.controller";
 
 import {
@@ -24,6 +25,7 @@ import {
 import { validateRequest } from "zod-express-middleware";
 import {
     createServiceValidator,
+    createTMServiceValidator,
     guildIdValidator,
 } from "./inputValidators/service.validators";
 
@@ -112,6 +114,13 @@ router.post(
     authMiddleware,
     validateRequest(createServiceValidator),
     createServiceController,
+);
+
+router.post(
+    "/create-tm-service",
+    authMiddleware,
+    validateRequest(createTMServiceValidator),
+    createTMServiceController,
 );
 
 router.get(
