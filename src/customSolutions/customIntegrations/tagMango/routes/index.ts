@@ -8,12 +8,12 @@ const router = Router();
 // Get OTP
 router.post("/getOtp", async (req, res) => {
     try {
-        const { phone } = req.body;
+        const { phone, domain } = req.body;
         const data = {
             phone,
             userAgent: req.headers["user-agent"] || "",
         };
-        const result = await getOtp(data);
+        const result = await getOtp(data, domain);
         if (result.code === 0 && result.type === "OK") {
             res.status(200).send({
                 message: "OTP sent successfully",
@@ -37,13 +37,13 @@ router.post("/getOtp", async (req, res) => {
 // Verify OTP
 router.post("/verifyOtp", async (req, res) => {
     try {
-        const { phone, otp } = req.body;
+        const { phone, otp, domain } = req.body;
         const data = {
             phone,
             otp,
             userAgent: req.headers["user-agent"] || "",
         };
-        const verified = await verifyOtp(data, req.customer.id);
+        const verified = await verifyOtp(data, req.customer.id, domain);
         if (verified) {
             res.status(200).send({
                 message: "OTP verified successfully",
@@ -66,12 +66,19 @@ router.get("/mangoes", async (req, res) => {
     try {
         const credential = await getCredential(req.customer.id);
         if (!credential) throw new Error("Credential not found");
-        const mangoes = await getAllActiveMangoes(credential);
-        if (!mangoes.result) throw new Error("No mangoes found");
+        const mangoes = await getAllActiveMangoes(req.customer.id);
+        if (!mangoes) throw new Error("No mangoes found");
+
+        const data = mangoes.map((mango: any) => {
+            return {
+                _id: mango._id,
+                title: mango.title,
+            };
+        });
 
         res.status(200).send({
             message: "Mangoes fetched successfully",
-            data: mangoes,
+            data,
         });
     } catch (error) {
         console.log(error);
@@ -86,14 +93,16 @@ router.get("/mangoes", async (req, res) => {
 router.post("/addCustomSolution", async (req, res) => {
     try {
         const { mango, serviceId } = req.body;
+        if (!mango) throw new Error("Mango not found");
+        if (!serviceId) throw new Error("ServiceId not found");
 
         const service = await serviceModel.findById(serviceId).exec();
         if (!service) throw new Error("Service not found");
-        
+
         const mangoes = await getAllActiveMangoes(req.customer.id);
-        if (!mangoes.result.find((m: any) => m._id === mango))
+        if (!mangoes.find((m: any) => m._id === mango))
             throw new Error("Mango not found in TagMango");
-        
+
         const mapper = await createMapper({
             mango,
             serviceId,
@@ -105,11 +114,10 @@ router.post("/addCustomSolution", async (req, res) => {
             message: "Service created successfully",
             data: mapper,
         });
-        
     } catch (error) {
         console.log(error);
         res.status(500).send({
-            message: "Error in creating service",
+            message: "Error in adding custom solution.",
             data: error,
         });
     }

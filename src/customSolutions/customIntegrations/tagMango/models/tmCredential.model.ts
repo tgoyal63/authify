@@ -6,6 +6,9 @@ export type TmCredentialDocument = mongoose.Document & {
     accessToken: string; // 1.5 hours
     refreshToken: string; // 1 month
     phone: number;
+    domain: string;
+    createdAt: Date;
+    updatedAt: Date;
 };
 
 const TmCredentialSchema = new mongoose.Schema(
@@ -19,6 +22,7 @@ const TmCredentialSchema = new mongoose.Schema(
         accessToken: { type: String, required: true },
         refreshToken: { type: String, required: true },
         phone: { type: Number, required: true },
+        domain: { type: String, required: true },
     },
     { timestamps: true },
 );
@@ -33,38 +37,19 @@ export const createCredential = async ({
     accessToken,
     refreshToken,
     phone,
+    domain
 }: {
     customerId: string;
     accessToken: string;
     refreshToken: string;
     phone: number;
+    domain: string;
 }) => {
     const credential = await model
         .updateOne(
             { customer: customerId },
-            { accessToken, refreshToken, phone },
+            { accessToken, refreshToken, phone, domain },
             { upsert: true },
-        )
-        .exec();
-    return credential;
-};
-
-export const updateCredential = async ({
-    customerId,
-    accessToken,
-    refreshToken,
-    phone,
-}: {
-    customerId: string;
-    accessToken: string;
-    refreshToken: string;
-    phone: number;
-}) => {
-    const credential = await model
-        .findOneAndUpdate(
-            { customer: customerId },
-            { accessToken, refreshToken, phone },
-            { new: true },
         )
         .exec();
     return credential;

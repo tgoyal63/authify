@@ -19,6 +19,7 @@ import {
 } from "../utils/discord.utils";
 import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
 import { getSpreadsheetDataFromServiceId } from "../services/spreadsheet.service";
+import { DiscordHTTPError } from "discord-oauth2";
 
 export const getServicesController = async (req: Request, res: Response) => {
     try {
@@ -44,6 +45,9 @@ export const getServicesController = async (req: Request, res: Response) => {
             success: true,
         });
     } catch (error: any) {
+        if(error instanceof DiscordHTTPError) {
+            return res.status(error.code).send({ message: error.message, success: false });
+        }
         res.status(500).send({ message: error.message, success: false });
     }
 };

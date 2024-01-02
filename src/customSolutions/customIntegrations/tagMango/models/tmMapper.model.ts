@@ -32,7 +32,6 @@ const TmMapperSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "customer",
         },
-        xWhiteLabelHost: { type: String, required: true },
         metadata: { type: Object },
         customIntegrationId: { type: String, required: true },
     },
