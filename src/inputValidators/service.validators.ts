@@ -22,7 +22,6 @@ export const createServiceValidator = {
     }),
 };
 
-
 export const createTMServiceValidator = {
     body: z.object({
         name: z.string().min(3).max(50),

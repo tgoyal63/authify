@@ -37,7 +37,7 @@ export const createCredential = async ({
     accessToken,
     refreshToken,
     phone,
-    domain
+    domain,
 }: {
     customerId: string;
     accessToken: string;
