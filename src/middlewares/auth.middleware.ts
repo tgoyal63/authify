@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyJWT } from "../utils/jwt.utils";
 import { getDiscordUser } from "../utils/oauth.utils";
+import OAuth from "discord-oauth2";
 
 export default async function (
     req: Request,
@@ -23,7 +24,7 @@ export default async function (
             throw new Error("Invalid token");
         }
 
-        const customer = {
+        const customer: Customer = {
             id: userData.id,
             discordId: userData.discordId,
             accessToken: userData.accessToken,
@@ -41,3 +42,12 @@ export default async function (
         res.status(401).json({ message: error.message });
     }
 }
+
+export type Customer = {
+    id: string;
+    discordId: string;
+    accessToken: string;
+    phone?: string | undefined;
+    email: string;
+    getDiscordUser: () => Promise<OAuth.User>;
+};

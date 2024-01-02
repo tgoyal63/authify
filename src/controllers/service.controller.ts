@@ -19,6 +19,7 @@ import {
 } from "../utils/discord.utils";
 import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
 import { getSpreadsheetDataFromServiceId } from "../services/spreadsheet.service";
+import { DiscordHTTPError } from "discord-oauth2";
 
 export const getServicesController = async (req: Request, res: Response) => {
     try {
@@ -44,6 +45,11 @@ export const getServicesController = async (req: Request, res: Response) => {
             success: true,
         });
     } catch (error: any) {
+        if (error instanceof DiscordHTTPError) {
+            return res
+                .status(error.code)
+                .send({ message: error.message, success: false });
+        }
         res.status(500).send({ message: error.message, success: false });
     }
 };
@@ -59,13 +65,13 @@ export const getServiceDataController = async (req: Request, res: Response) => {
                 service._id,
             );
             if (!sheetData) throw new Error("Sheet not found");
-            
+
             const guilds = await getGuilds(req.customer.accessToken);
             if (!guilds) throw new Error("Error fetching guilds");
-            
+
             const guild = guilds.find((guild) => guild.id === service.guildId);
             if (!guild) throw new Error("Guild not found");
-            
+
             return res.send({
                 data: {
                     sheet: sheetData,
@@ -195,7 +201,6 @@ export const createServiceController = async (
     }
 };
 
-
 export const createTMServiceController = async (
     req: TypedRequestBody<typeof createTMServiceValidator.body>,
     res: Response,
@@ -212,7 +217,7 @@ export const createTMServiceController = async (
             req.body.name,
             req.body.guildId,
             req.customer.id,
-            req.body.roleIds
+            req.body.roleIds,
         );
 
         await deployCommandsToGuild(req.body.guildId);

@@ -1,4 +1,4 @@
-import DiscordOauth2 from "discord-oauth2";
+import DiscordOauth2, { DiscordHTTPError } from "discord-oauth2";
 import { CLIENT_ID, CLIENT_SECRET, DYNAMIC_REDIRECT_URI } from "../config";
 
 const oauth = new DiscordOauth2({

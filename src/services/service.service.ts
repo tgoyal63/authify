@@ -52,7 +52,7 @@ export const createTMService = async (
         throw new Error("Error creating service");
     }
     return service;
-}
+};
 
 export const createService = async (
     name: string,
