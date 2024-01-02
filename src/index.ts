@@ -27,3 +27,10 @@ dbConnect().then(() => {
         loginToBot();
     });
 });
+
+app.get("/", (_, res) => {
+    return res.status(200).json({
+        success: true,
+        message: "Hello from authify!!",
+    });
+});
