@@ -4,7 +4,7 @@ import {
     createServiceValidator,
     createTMServiceValidator,
     guildIdValidator,
-} from "../inputValidators/service.validators";
+} from "@/inputValidators/service.validators";
 import {
     getNumberOfServicesInDiscordGuild,
     getServicesOfDiscordGuilds,
