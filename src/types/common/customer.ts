@@ -7,4 +7,4 @@ export interface Customer {
     phone?: string;
     email: string;
     getDiscordUser: () => Promise<DiscordUser>;
-};
+}
