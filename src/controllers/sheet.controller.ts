@@ -5,54 +5,49 @@ import {
     sheetHeadersValidator,
     sheetHeadersValidatorV2,
     sheetRegex,
-} from "../inputValidators/sheet.validators";
+} from "@/inputValidators/sheet.validators";
 import {
     editCell,
     getCell,
     getColumnData,
     getInternalSheets,
-} from "../utils/sheet.utils";
+} from "@/utils/sheet.utils";
+import { ApiHandler } from "@/utils/api-handler.util";
 
-export const getInternalSheetController = async (
-    req: TypedRequestQuery<typeof getInternalSheetValidator.query>,
-    res: Response,
-) => {
-    try {
+export const getInternalSheetController = ApiHandler(
+    async (
+        req: TypedRequestQuery<typeof getInternalSheetValidator.query>,
+        res: Response,
+    ) => {
         const sheetSplit = req.query.spreadSheetUrl.match(sheetRegex);
-        if (!sheetSplit) {
-            res.send({ success: false, message: "No sheet found" });
-            return;
-        }
+        if (!sheetSplit)
+            return res.send({ success: false, message: "No sheet found" });
+
         const spreadSheetId = sheetSplit[1] as string;
-
         const internalSheetData = await getInternalSheets(spreadSheetId);
-        if (!internalSheetData) {
-            res.send({ success: false, message: "No sheet found" });
-            return;
-        }
+        if (!internalSheetData)
+            return res.send({ success: false, message: "No sheet found" });
 
-        const respponseData = internalSheetData.map((sheet) => {
+        const responseData = internalSheetData.map((sheet) => {
             return {
                 sheetId: sheet.properties?.sheetId,
                 title: sheet.properties?.title,
                 index: sheet.properties?.index,
             };
         });
-        res.send({
+        return res.send({
             success: true,
-            data: respponseData,
+            data: responseData,
             message: "Internal sheet data fetched succesfully.",
         });
-    } catch (error: any) {
-        res.status(500).send({ message: error.message, success: false });
-    }
-};
+    },
+);
 
-export const validateSheetHeadersController = async (
-    req: TypedRequestQuery<typeof sheetHeadersValidator.query>,
-    res: Response,
-) => {
-    try {
+export const validateSheetHeadersController = ApiHandler(
+    async (
+        req: TypedRequestQuery<typeof sheetHeadersValidator.query>,
+        res: Response,
+    ) => {
         const sheetSplit = req.query.spreadSheetUrl.match(sheetRegex);
         if (!sheetSplit) throw new Error("No sheet found");
         const spreadSheetId = sheetSplit[1] as string;
@@ -77,16 +72,14 @@ export const validateSheetHeadersController = async (
             },
             message: "Sheet headers fetched succesfully.",
         });
-    } catch (error: any) {
-        res.status(500).send({ message: error.message, success: false });
-    }
-};
+    },
+);
 
-export const getSheetHeadersController = async (
-    req: TypedRequestQuery<typeof sheetHeadersValidatorV2.query>,
-    res: Response,
-) => {
-    try {
+export const getSheetHeadersController = ApiHandler(
+    async (
+        req: TypedRequestQuery<typeof sheetHeadersValidatorV2.query>,
+        res: Response,
+    ) => {
         const sheetSplit = req.query.spreadSheetUrl.match(sheetRegex);
         if (!sheetSplit) throw new Error("No sheet found");
         const spreadSheetId = sheetSplit[1] as string;
@@ -107,7 +100,5 @@ export const getSheetHeadersController = async (
             data: headerRowData.values[0],
             message: "Sheet headers fetched succesfully.",
         });
-    } catch (error: any) {
-        res.status(500).send({ message: error.message, success: false });
-    }
-};
+    },
+);

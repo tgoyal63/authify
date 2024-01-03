@@ -5,23 +5,19 @@ import {
     verifyOtpValidator,
 } from "@/inputValidators/auth.validators";
 import { generateOtp, generateOtpHash, sendOtp } from "@/utils/otp.utils";
-
 import {
     createCustomer,
     getCustomerByDiscordId,
     renewCredentials,
     updatePhone,
-} from "../services/customer.service";
-
-import { signJWT } from "../utils/jwt.utils";
-
+} from "@/services/customer.service";
+import { signJWT } from "@/utils/jwt.utils";
 import {
     generateOauthUrl,
     getDiscordUser,
     getTokens,
-} from "../utils/oauth.utils";
-
-import { FRONTEND_CLIENT_URL, OTP_EXPIRY_TIME } from "../config";
+} from "@/utils/oauth.utils";
+import { FRONTEND_CLIENT_URL, OTP_EXPIRY_TIME } from "@/config";
 import { ApiHandler } from "@/utils/api-handler.util";
 
 export const callbackController = ApiHandler(async (req, res) => {
@@ -81,7 +77,7 @@ export const callbackController = ApiHandler(async (req, res) => {
             phone: String(customer.phone),
             email: customer.email,
         },
-        "14d",
+        "14d", // 14 days
     );
     // console.log(jwt)
     const params = new URLSearchParams({
