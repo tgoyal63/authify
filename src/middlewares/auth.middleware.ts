@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyJWT } from "../utils/jwt.utils";
 import { getDiscordUser } from "../utils/oauth.utils";
-import OAuth from "discord-oauth2";
+import { Customer } from "@/types/common";
 
 export default async function (
     req: Request,
@@ -10,19 +10,13 @@ export default async function (
 ) {
     try {
         const authHeader = req.headers.authorization;
-        if (!authHeader) {
-            throw new Error("Authorization header not found");
-        }
+        if (!authHeader) throw new Error("Authorization header not found");
 
         const token = authHeader.split(" ")[1]; // Assuming a header like "Bearer <token>"
-        if (!token) {
-            throw new Error("Token not found in Authorization header");
-        }
+        if (!token) throw new Error("Token not found in Authorization header");
 
         const userData = verifyJWT(token);
-        if (!userData) {
-            throw new Error("Invalid token");
-        }
+        if (!userData) throw new Error("Invalid token");
 
         const customer: Customer = {
             id: userData.id,
@@ -36,18 +30,8 @@ export default async function (
         };
 
         req.customer = customer;
-
         next();
     } catch (error: any) {
         res.status(401).json({ message: error.message });
     }
 }
-
-export type Customer = {
-    id: string;
-    discordId: string;
-    accessToken: string;
-    phone?: string | undefined;
-    email: string;
-    getDiscordUser: () => Promise<OAuth.User>;
-};

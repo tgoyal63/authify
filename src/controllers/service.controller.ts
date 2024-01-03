@@ -11,20 +11,18 @@ import {
     createService,
     getServiceData,
     createTMService,
-} from "../services/service.service";
+} from "@/services/service.service";
 import {
     deployCommandsToGuild,
     isAdmin,
     verifyGuild,
-} from "../utils/discord.utils";
-import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
-import { getSpreadsheetDataFromServiceId } from "../services/spreadsheet.service";
-const DiscordOAuth2 = import("discord-oauth2");
+} from "@/utils/discord.utils";
+import { generateBotInviteLink, getGuilds } from "@/utils/oauth.utils";
+import { getSpreadsheetDataFromServiceId } from "@/services/spreadsheet.service";
+import { ApiHandler } from "@/utils/api-handler.util";
 
-export const getServicesController = async (req: Request, res: Response) => {
-    const { DiscordHTTPError } = await DiscordOAuth2;
-
-    try {
+export const getServicesController = ApiHandler(
+    async (req: Request, res: Response) => {
         const guilds = await getGuilds(req.customer.accessToken);
         if (!guilds) throw new Error("Error fetching guilds");
         const guildIds = [];
@@ -46,18 +44,11 @@ export const getServicesController = async (req: Request, res: Response) => {
             message: "Services fetched successfully",
             success: true,
         });
-    } catch (error: any) {
-        if (error instanceof DiscordHTTPError) {
-            return res
-                .status(error.code)
-                .send({ message: error.message, success: false });
-        }
-        return res.status(500).send({ message: error.message, success: false });
-    }
-};
+    },
+);
 
-export const getServiceDataController = async (req: Request, res: Response) => {
-    try {
+export const getServiceDataController = ApiHandler(
+    async (req: Request, res: Response) => {
         // serviceID -> serviceData. populate(creator) -> integrationType // 1st method implemented
         const service = await getServiceData(req.params.serviceId);
         // integrationType -> sheets -> sheetData-> sheetsData // 1st method --> populate(service) by taking integrationType in Request --> 2nd method
@@ -93,16 +84,11 @@ export const getServiceDataController = async (req: Request, res: Response) => {
             message: "Invalid integration type",
             success: false,
         });
-    } catch (error: any) {
-        return res.status(500).send({ message: error.message, success: false });
-    }
-};
+    },
+);
 
-export const getGuildsOfUserController = async (
-    req: Request,
-    res: Response,
-) => {
-    try {
+export const getGuildsOfUserController = ApiHandler(
+    async (req: Request, res: Response) => {
         const guilds = await getGuilds(req.customer.accessToken);
         const respponseData = guilds.map((guild) => {
             return {
@@ -117,48 +103,39 @@ export const getGuildsOfUserController = async (
             message: "Guilds fetched successfully",
             success: true,
         });
-    } catch (error: any) {
-        res.status(500).send({ message: error.message, success: false });
-    }
-};
+    },
+);
 
-export const generateBotInviteLinkController = async (
+export const generateBotInviteLinkController = ApiHandler(async (
     req: TypedRequestQuery<typeof guildIdValidator.query>,
     res: Response,
 ) => {
-    try {
         const url = generateBotInviteLink(req.query.guildId);
         res.send({
             data: url,
             message: "Bot invite link generated successfully",
             success: true,
         });
-    } catch (error: any) {
-        res.status(500).send({ message: error.message, success: false });
-    }
-};
+});
 
-export const verifyBotInGuildController = async (
-    req: TypedRequestQuery<typeof guildIdValidator.query>,
-    res: Response,
-) => {
-    try {
+export const verifyBotInGuildController = ApiHandler(
+    async (
+        req: TypedRequestQuery<typeof guildIdValidator.query>,
+        res: Response,
+    ) => {
         const isAdded = await verifyGuild(req.query.guildId);
         res.send({
             data: { isAdded },
             message: "Bot status sent.",
             success: true,
         });
-    } catch (error: any) {
-        res.status(500).send({ message: error.message, success: false });
-    }
-};
+    },
+);
 
-export const createServiceController = async (
+export const createServiceController = ApiHandler(async (
     req: TypedRequestBody<typeof createServiceValidator.body>,
     res: Response,
 ) => {
-    try {
         const numberOfExistingServices =
             await getNumberOfServicesInDiscordGuild(req.body.guildId);
         if (numberOfExistingServices >= 1)
@@ -193,21 +170,18 @@ export const createServiceController = async (
 
         await deployCommandsToGuild(req.body.guildId);
 
-        res.send({
+        return res.status(200).json({
             data: service,
             message: "Service created successfully",
             success: true,
         });
-    } catch (error: any) {
-        res.status(500).send({ message: error.message, success: false });
-    }
-};
 
-export const createTMServiceController = async (
+});
+
+export const createTMServiceController = ApiHandler(async (
     req: TypedRequestBody<typeof createTMServiceValidator.body>,
     res: Response,
 ) => {
-    try {
         // const numberOfExistingServices =
         //     await getNumberOfServicesInDiscordGuild(req.body.guildId);
         // if (numberOfExistingServices >= 1)
@@ -229,7 +203,4 @@ export const createTMServiceController = async (
             message: "Service created successfully",
             success: true,
         });
-    } catch (error: any) {
-        res.status(500).send({ message: error.message, success: false });
-    }
-};
+});
