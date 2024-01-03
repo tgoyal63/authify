@@ -19,9 +19,11 @@ import {
 } from "../utils/discord.utils";
 import { generateBotInviteLink, getGuilds } from "../utils/oauth.utils";
 import { getSpreadsheetDataFromServiceId } from "../services/spreadsheet.service";
-import { DiscordHTTPError } from "discord-oauth2";
+const DiscordOAuth2 = import("discord-oauth2");
 
 export const getServicesController = async (req: Request, res: Response) => {
+    const { DiscordHTTPError } = await DiscordOAuth2;
+
     try {
         const guilds = await getGuilds(req.customer.accessToken);
         if (!guilds) throw new Error("Error fetching guilds");
@@ -39,7 +41,7 @@ export const getServicesController = async (req: Request, res: Response) => {
                 guild: guild,
             };
         });
-        res.send({
+        return res.send({
             data: servicesWithGuilds,
             message: "Services fetched successfully",
             success: true,
@@ -50,7 +52,7 @@ export const getServicesController = async (req: Request, res: Response) => {
                 .status(error.code)
                 .send({ message: error.message, success: false });
         }
-        res.status(500).send({ message: error.message, success: false });
+        return res.status(500).send({ message: error.message, success: false });
     }
 };
 
