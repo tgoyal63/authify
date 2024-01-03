@@ -46,12 +46,14 @@ export const createMapper = async ({
     tmCredentialId,
     customerId,
     metadata,
+    customIntegrationId,
 }: {
     mango: string;
     serviceId: string;
     tmCredentialId: string;
     customerId: string;
     metadata: object;
+    customIntegrationId: string;
 }) => {
     const mapper = await model.create({
         mango,
@@ -59,6 +61,7 @@ export const createMapper = async ({
         tmCredential: tmCredentialId,
         customer: customerId,
         metadata,
+        customIntegrationId,
     });
     return mapper;
 };

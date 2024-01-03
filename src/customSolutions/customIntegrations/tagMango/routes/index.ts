@@ -109,15 +109,22 @@ router.post("/addCustomSolution", async (req, res) => {
             customerId: req.customer.id,
             tmCredentialId: (await getCredential(req.customer.id))?._id,
             metadata: {},
+            customIntegrationId: service.customIntegrationId,
         });
         res.status(200).send({
-            message: "Service created successfully",
-            data: mapper,
+            message: "Custom TagMango Service created successfully",
         });
     } catch (error) {
-        console.log(error);
-        res.status(500).send({
-            message: "Error in adding custom solution.",
+        if (error.name === "MongoServerError") {
+            if (error.code === 11000) {
+                return res.status(400).send({
+                    message: "Service already exists!",
+                    data: error.keyValue,
+                });
+            }
+        }
+        return res.status(500).send({
+            message: "Error in creating custom TagMango Service",
             data: error,
         });
     }

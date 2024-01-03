@@ -67,11 +67,11 @@ export const getAccessToken = async (customerId: string) => {
     if (!credential) throw new Error("Credential not found");
 
     // If token is valid for more than 80 minutes, return it
-    if (credential.updatedAt.getTime() + 80 * 60 * 1000 > Date.now())
-        return {
-            accessToken: credential.accessToken,
-            domain: credential.domain,
-        };
+    // if (credential.updatedAt.getTime() + 80 * 60 * 1000 > Date.now())
+    //     return {
+    //         accessToken: credential.accessToken,
+    //         domain: credential.domain,
+    //     };
 
     const { refreshToken } = credential;
     const config = {
