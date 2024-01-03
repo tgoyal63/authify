@@ -1,13 +1,13 @@
 import cors from "cors";
 import express from "express";
-import { FRONTEND_CLIENT_URL, GUILD_ID, PORT } from "./config";
+import { CORS_ORIGIN, GUILD_ID, PORT } from "./config";
 import { loginToBot } from "./discord";
 import routes from "./routes";
 import dbConnect from "./utils/dbconn.util";
 import { deployCommandsToGuild } from "./utils/discord.utils";
 
 const corsOptions = {
-    origin: FRONTEND_CLIENT_URL,
+    origin: CORS_ORIGIN,
     allowedHeaders: [
         "Content-Type",
         "Authorization",

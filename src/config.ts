@@ -7,6 +7,7 @@ else ngrokURL = Promise.resolve("");
 export const TOKEN: string = process.env.TOKEN || "";
 export const FRONTEND_CLIENT_URL: string =
     process.env.FRONTEND_CLIENT_URL || "http://localhost:3000";
+export const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
 export const MONGO_URI: string = process.env.MONGO_URI || "";
 export const PORT: number = parseInt(process.env.PORT || "5000", 10);
 export const CLIENT_ID: string = process.env.CLIENT_ID || "";
