@@ -1,4 +1,4 @@
-import { Customer } from "../../middlewares/auth.middleware";
+import { Customer } from "@/types/common";
 
 declare global {
     namespace Express {
