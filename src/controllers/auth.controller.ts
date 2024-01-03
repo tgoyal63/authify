@@ -20,23 +20,52 @@ import {
 import { FRONTEND_CLIENT_URL, OTP_EXPIRY_TIME } from "@/config";
 import { ApiHandler } from "@/utils/api-handler.util";
 
-export const callbackController = ApiHandler(async (req, res) => {
-    const state = req.query.state as string;
-    const code = req.query.code as string;
-    if (state === "bot")
-        return res.redirect(
-            `${FRONTEND_CLIENT_URL}/messages/success-message-bot`,
-        );
-    if (!code) throw new Error("Authentication Failed");
-    const token = await getTokens(code);
-    const user = await getDiscordUser(token.access_token);
-    const customer = await getCustomerByDiscordId(user.id);
-    if (!customer) {
-        if (!user.verified || !user.email) throw new Error("EmailNotVerified");
-        const createdCustomer = await createCustomer(
+export const callbackController = ApiHandler(
+    async (req: Request, res: Response) => {
+        const state = req.query.state as string;
+        const code = req.query.code as string;
+        if (state === "bot")
+            return res.redirect(
+                `${FRONTEND_CLIENT_URL}/messages/success-message-bot`,
+            );
+        if (!code) throw new Error("Authentication Failed");
+        const token = await getTokens(code);
+        const user = await getDiscordUser(token.access_token);
+        const customer = await getCustomerByDiscordId(user.id);
+        if (!customer) {
+            if (!user.verified || !user.email)
+                throw new Error("EmailNotVerified");
+            const createdCustomer = await createCustomer(
+                user.id,
+                user.username,
+                user.email as string,
+                token.refresh_token,
+                token.access_token,
+                token.expires_in,
+                token.scope,
+            );
+            const jwt = signJWT(
+                {
+                    id: createdCustomer._id,
+                    discordId: user.id,
+                    accessToken: token.access_token,
+                    email: user.email as string,
+                },
+                `${token.expires_in}s`,
+            );
+
+            const params = new URLSearchParams({
+                token: jwt,
+                phone: "",
+                type: "signup",
+            });
+
+            return res.redirect(
+                `${FRONTEND_CLIENT_URL}/auth/callback-url?${params.toString()}`,
+            );
+        }
+        await renewCredentials(
             user.id,
-            user.username,
-            user.email as string,
             token.refresh_token,
             token.access_token,
             token.expires_in,
@@ -44,56 +73,32 @@ export const callbackController = ApiHandler(async (req, res) => {
         );
         const jwt = signJWT(
             {
-                id: createdCustomer._id,
+                id: customer._id,
                 discordId: user.id,
                 accessToken: token.access_token,
-                email: user.email as string,
+                phone: String(customer.phone),
+                email: customer.email,
             },
-            `${token.expires_in}s`,
+            "14d", // 14 days
         );
-
+        // console.log(jwt)
         const params = new URLSearchParams({
             token: jwt,
             phone: "",
             type: "signup",
         });
-
         return res.redirect(
             `${FRONTEND_CLIENT_URL}/auth/callback-url?${params.toString()}`,
         );
-    }
-    await renewCredentials(
-        user.id,
-        token.refresh_token,
-        token.access_token,
-        token.expires_in,
-        token.scope,
-    );
-    const jwt = signJWT(
-        {
-            id: customer._id,
-            discordId: user.id,
-            accessToken: token.access_token,
-            phone: String(customer.phone),
-            email: customer.email,
-        },
-        "14d", // 14 days
-    );
-    // console.log(jwt)
-    const params = new URLSearchParams({
-        token: jwt,
-        phone: "",
-        type: "signup",
-    });
-    return res.redirect(
-        `${FRONTEND_CLIENT_URL}/auth/callback-url?${params.toString()}`,
-    );
-});
+    },
+);
 
-export const loginController = ApiHandler(async (req, res) => {
-    const oauthLink = generateOauthUrl("state");
-    res.redirect(oauthLink);
-});
+export const loginController = ApiHandler(
+    async (req: Request, res: Response) => {
+        const oauthLink = generateOauthUrl("state");
+        res.redirect(oauthLink);
+    },
+);
 
 export const sendOtpController = ApiHandler(async (
     req: TypedRequestBody<typeof sendOtpValidator.body>,

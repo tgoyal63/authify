@@ -4,7 +4,7 @@ export interface Customer {
     id: string;
     discordId: string;
     accessToken: string;
-    phone?: string;
+    phone?: string | undefined;
     email: string;
     getDiscordUser: () => Promise<DiscordUser>;
 }
