@@ -28,9 +28,19 @@ dbConnect().then(() => {
     });
 });
 
+// Home route handler. Returns a simple message.
 app.get("/", (_, res) => {
     return res.status(200).json({
         success: true,
         message: "Hello from authify!!",
+    });
+});
+
+// 404 route handler. Returns a simple error message.
+app.use((_, res) => {
+    return res.status(404).json({
+        success: false,
+        code: 404,
+        error: "Not found",
     });
 });
