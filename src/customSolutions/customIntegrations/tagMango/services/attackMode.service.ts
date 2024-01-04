@@ -11,7 +11,7 @@ interface AttackModeSubscriber {
 }
 
 export const addOrUpdateSubscriber = async (
-    data: Partial<AttackModeSubscriber>,
+    data: AttackModeSubscriber,
 ) => {
     const subscriber = attackModeModel.findOneAndUpdate(
         { tmId: data.tmId },
@@ -22,7 +22,7 @@ export const addOrUpdateSubscriber = async (
 };
 
 export const addOrUpdateMultipleSubscribers = async (
-    data: Partial<AttackModeSubscriber>[],
+    data: AttackModeSubscriber[],
 ) => {
     const subscribers = attackModeModel.updateMany(
         { tmId: { $in: data.map((d) => d.tmId) } },
