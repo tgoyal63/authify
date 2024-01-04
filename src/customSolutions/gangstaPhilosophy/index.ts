@@ -6,7 +6,7 @@ import {
     addOrUpdateSubscriber,
     getSubscriber,
 } from "../customIntegrations/tagMango/services/attackMode.service";
-import { DiscordError } from "@/types/error/discord-error";
+import { DiscordError } from "@/types/error";
 
 router.get("/", async (req, res) => {
     res.send("Welcome to Gangsta Philosophy!");
