@@ -112,15 +112,19 @@ export const getSubscribers = async ({
     type = "all",
     pageSize = 25,
     mangoes,
-    term,
     customerId,
+    term,
+    startDate,
+    endDate,
 }: {
-    page: number;
-    type: string;
-    term: string;
+    page?: number;
+    type: "all" | "active" | "inactive" | "revoked";
+    pageSize?: number;
     mangoes: string;
-    pageSize: number;
     customerId: string;
+    term: string | number;
+    startDate?: string;
+    endDate?: string;
 }) => {
     const credential = await getAccessToken(customerId);
     const config = {
@@ -132,13 +136,13 @@ export const getSubscribers = async ({
             "Content-Type": "application/json",
             authorization: `Bearer ${credential.accessToken}`,
         },
-        params: { page, type, pageSize, mangoes, term },
+        params: { page, type, pageSize, mangoes, term, startDate, endDate },
     };
     const response = await axios(config);
     const result = response.data;
 
     if (result.code === 0 && result.type === "OK") {
-        return result;
+        return result.result;
     }
     throw result;
 };
