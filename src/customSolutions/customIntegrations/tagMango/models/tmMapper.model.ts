@@ -1,7 +1,7 @@
 // mango, service, credential, customer
 import mongoose from "mongoose";
-import { CustomerDocument } from "../../../../models/mongoDB/customer.model";
-import { ServiceDocument } from "../../../../models/mongoDB/service.model";
+import { CustomerDocument } from "@/models/mongoDB/customer.model";
+import { ServiceDocument } from "@/models/mongoDB/service.model";
 import { TmCredentialDocument } from "./tmCredential.model";
 
 export type TmMapperDocument = mongoose.Document & {
