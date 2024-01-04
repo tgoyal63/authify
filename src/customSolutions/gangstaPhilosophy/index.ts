@@ -6,6 +6,7 @@ import {
     addOrUpdateSubscriber,
     getSubscriber,
 } from "../customIntegrations/tagMango/services/attackMode.service";
+import { DiscordError } from "@/types/error/discord-error";
 
 router.get("/", async (req, res) => {
     res.send("Welcome to Gangsta Philosophy!");
@@ -17,7 +18,7 @@ const subscriberValidator = async (
     discordId: string,
 ) => {
     const mangoData = await getMangoDetails(mangoes);
-    if (!mangoData) throw new Error("Mango not found");
+    if (!mangoData) throw new DiscordError("Mango not found", false);
     const { customer } = mangoData;
 
     // Fetching from tagMango
@@ -33,8 +34,9 @@ const subscriberValidator = async (
 
     // check if subscriber is an array of length 1
     if (subscriber.length !== 1)
-        throw new Error(
-            "Multiple subscribers found on gangstaPhilosophy for this course!",
+        throw new DiscordError(
+            "Multiple subscribers found, for the same mango and term!",
+            false,
         );
 
     subscriber = subscriber[0];
@@ -55,16 +57,20 @@ const subscriberValidator = async (
             discordLinkTimestamp: new Date(),
         };
         const data = addOrUpdateSubscriber(newSubscriber);
-        if (!data) throw new Error("Failed to add subscriber!");
+        if (!data) throw new DiscordError("Failed to add subscriber!", false);
         return true;
     }
 
     // check if dbSubscriber has discordId and if it has return false
-    if (dbSubscriber.discordId && dbSubscriber.discordId === discordId) return true;
+    if (dbSubscriber.discordId && dbSubscriber.discordId === discordId)
+        return true;
 
     // if dbSubscriber has discordId but it's different, throw error
     if (dbSubscriber.discordId && dbSubscriber.discordId !== discordId)
-        throw new Error("Subscriber already linked to another Discord!");
+        throw new DiscordError(
+            `${term} already linked to another Discord Account!`,
+            true,
+        );
 
     // check if dbSubscriber has same phone number and email, return true
     if (
@@ -84,7 +90,7 @@ const subscriberValidator = async (
             phone: subscriber.fanPhone,
         };
         const data = addOrUpdateSubscriber(updatedSubscriber);
-        if (!data) throw new Error("Failed to update subscriber");
+        if (!data) throw new DiscordError("Failed to update subscriber", false);
         return true;
     }
     return false;
