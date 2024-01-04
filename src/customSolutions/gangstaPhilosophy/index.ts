@@ -33,12 +33,12 @@ const subscriberValidator = async (mangoes: string, term: string | number) => {
     subscriber = subscriber[0];
 
     // Fetching from attackmode db
-    const dbSubscriber = await getSubscriber(subscriber._id);
+    const dbSubscriber = await getSubscriber(subscriber.fanId);
 
     // if dbSubscriber doesn't exist, add it and return true
     if (!dbSubscriber) {
         const newSubscriber = {
-            tmId: subscriber._id,
+            tmId: subscriber.fanId,
             email: subscriber.fanEmail,
             phone: subscriber.fanPhone,
             name: subscriber.fanName,
