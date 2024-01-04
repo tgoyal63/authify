@@ -11,7 +11,11 @@ router.get("/", async (req, res) => {
     res.send("Welcome to Gangsta Philosophy!");
 });
 
-const subscriberValidator = async (mangoes: string, term: string | number) => {
+const subscriberValidator = async (
+    mangoes: string,
+    term: string | number,
+    discordId: string,
+) => {
     const mangoData = await getMangoDetails(mangoes);
     if (!mangoData) throw new Error("Mango not found");
     const { customer } = mangoData;
@@ -23,6 +27,9 @@ const subscriberValidator = async (mangoes: string, term: string | number) => {
         mangoes,
         customerId: customer,
     });
+
+    // if subscriber doesn't exist, return false
+    if (subscriber.length === 0) return false;
 
     // check if subscriber is an array of length 1
     if (subscriber.length !== 1)
@@ -43,6 +50,9 @@ const subscriberValidator = async (mangoes: string, term: string | number) => {
             phone: subscriber.fanPhone,
             name: subscriber.fanName,
             country: subscriber.fanCountry,
+            discordId,
+            linkedDiscord: true,
+            discordLinkTimestamp: new Date(),
         };
         const data = addOrUpdateSubscriber(newSubscriber);
         if (!data) throw new Error("Failed to add subscriber!");
@@ -50,8 +60,11 @@ const subscriberValidator = async (mangoes: string, term: string | number) => {
     }
 
     // check if dbSubscriber has discordId and if it has return false
-    if (dbSubscriber.discordId)
-        throw new Error("Subscriber already linked to Discord!");
+    if (dbSubscriber.discordId && dbSubscriber.discordId === discordId) return true;
+
+    // if dbSubscriber has discordId but it's different, throw error
+    if (dbSubscriber.discordId && dbSubscriber.discordId !== discordId)
+        throw new Error("Subscriber already linked to another Discord!");
 
     // check if dbSubscriber has same phone number and email, return true
     if (
