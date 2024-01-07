@@ -40,9 +40,11 @@ export const verifyOtp = async (
         headers: {
             "Content-Type": "application/json",
             "x-whitelabel-host": domain,
+        },
+        data: {
+            ...data,
             logoutAll: true,
         },
-        data,
     };
     const response = await axios(config);
     if (response.data.code !== 0) throw new Error(response.data);
@@ -118,11 +120,11 @@ export const getSubscribers = async ({
     endDate,
 }: {
     page?: number;
-    type: "all" | "active" | "inactive" | "revoked";
+    type?: "all" | "active" | "inactive" | "revoked";
     pageSize?: number;
     mangoes: string;
     customerId: string;
-    term: string | number;
+    term?: string | number;
     startDate?: string;
     endDate?: string;
 }) => {
