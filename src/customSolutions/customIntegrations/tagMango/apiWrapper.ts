@@ -39,8 +39,8 @@ export const verifyOtp = async (
         url: "https://api-prod-new.tagmango.com/verify-otp",
         headers: {
             "Content-Type": "application/json",
-            "x-whitelabel-creator": "64ba7f405161b1b6716e0a83",
             "x-whitelabel-host": domain,
+            logoutAll: true,
         },
         data,
     };
@@ -135,7 +135,7 @@ export const getSubscribers = async ({
             "x-whitelabel-host": credential.domain,
             "Content-Type": "application/json",
             authorization: `Bearer ${credential.accessToken}`,
-            "x-whitelabel-creator": "64ba7f405161b1b6716e0a83",
+            "x-whitelabel-creator": await getHostDetails(customerId),
         },
         params: {
             page,
@@ -165,7 +165,7 @@ export const getAllActiveMangoes = async (customerId: string) => {
         url: "https://api-prod-new.tagmango.com/get-all-active-mangoes",
         headers: {
             "x-whitelabel-host": credential.domain,
-            "x-whitelabel-creator": "64ba7f405161b1b6716e0a83",
+            "x-whitelabel-creator": await getHostDetails(customerId),
             authorization: `Bearer ${credential.accessToken}`,
         },
     };
@@ -174,6 +174,26 @@ export const getAllActiveMangoes = async (customerId: string) => {
 
     if (result.code === 0 && result.type === "OK") {
         return result.result;
+    }
+    throw result;
+};
+
+export const getHostDetails = async (customerId: string) => {
+    const credential = await getAccessToken(customerId);
+    const config = {
+        method: "get",
+        maxBodyLength: Infinity,
+        url: "https://api-prod-new.tagmango.com/get-host-details",
+        headers: {
+            "x-whitelabel-host": credential.domain,
+            authorization: `Bearer ${credential.accessToken}`,
+        },
+    };
+    const response = await axios(config);
+    const result = response.data;
+
+    if (result.code === 0 && result.type === "OK") {
+        return result.result.creator._id;
     }
     throw result;
 };

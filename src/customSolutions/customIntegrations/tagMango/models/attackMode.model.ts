@@ -6,6 +6,7 @@ export type TmSubscriberDocument = mongoose.Document & {
     email: string;
     phone: number;
     name: string;
+    country: string;
     linkedDiscord: boolean;
     discordLinkTimestamp: Date;
 };

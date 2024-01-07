@@ -15,7 +15,6 @@ router.get("/", async (req, res) => {
 const subscriberValidator = async (
     serviceId: string,
     term: string | number,
-    discordId: string,
 ) => {
     const mangoData = await getMangoDetailsFromServiceId(serviceId);
     if (!mangoData) throw new DiscordError("Mango not found", false);
@@ -45,7 +44,7 @@ const subscriberValidator = async (
     // Fetching from attackmode db
     const dbSubscriber = await getSubscriber(subscriber.fanId);
 
-    // if dbSubscriber doesn't exist, add it and return true
+    // if dbSubscriber doesn't exist, add it and return tagMango subscriber id
     if (!dbSubscriber) {
         const newSubscriber = {
             tmId: subscriber.fanId,
@@ -53,34 +52,27 @@ const subscriberValidator = async (
             phone: subscriber.fanPhone,
             name: subscriber.fanName,
             country: subscriber.fanCountry,
-            discordId,
-            linkedDiscord: true,
-            discordLinkTimestamp: new Date(),
         };
-        const data = addOrUpdateSubscriber(newSubscriber);
+        const data = await addOrUpdateSubscriber(newSubscriber);
         if (!data) throw new DiscordError("Failed to add subscriber!", false);
-        return true;
+        return subscriber.fanId;
     }
 
     // check if dbSubscriber has discordId and if it has return false
-    if (dbSubscriber.discordId && dbSubscriber.discordId === discordId)
-        return true;
-
-    // if dbSubscriber has discordId but it's different, throw error
-    if (dbSubscriber.discordId && dbSubscriber.discordId !== discordId)
+    if (dbSubscriber.discordId)
         throw new DiscordError(
-            `${term} already linked to another Discord Account!`,
+            "Subscriber already linked to another Discord Account!",
             true,
         );
 
-    // check if dbSubscriber has same phone number and email, return true
+    // check if dbSubscriber has same phone number and email, return tagMango subscriber id
     if (
         dbSubscriber.email === subscriber.fanEmail &&
         dbSubscriber.phone === subscriber.fanPhone
     )
-        return true;
+        return subscriber.fanId;
 
-    // if dbSubscriber has different phone number and email, update it and return true
+    // if dbSubscriber has different phone number and email, update it and return tagMango subscriber id
     if (
         dbSubscriber.email !== subscriber.fanEmail ||
         dbSubscriber.phone !== subscriber.fanPhone
@@ -90,11 +82,34 @@ const subscriberValidator = async (
             email: subscriber.fanEmail,
             phone: subscriber.fanPhone,
         };
-        const data = addOrUpdateSubscriber(updatedSubscriber);
+        const data = await addOrUpdateSubscriber(updatedSubscriber);
         if (!data) throw new DiscordError("Failed to update subscriber", false);
-        return true;
+        return subscriber.fanId;
     }
     return false;
+};
+
+const linkDiscord = async (fanId: string, discordId: string) => {
+    const dbSubscriber = await getSubscriber(fanId);
+    if (!dbSubscriber) {
+        throw new DiscordError(
+            "Subscriber not found, please validate subscriber first!",
+            false,
+        );
+    }
+    const updateSubscriber = {
+        tmId: dbSubscriber.tmId,
+        discordId,
+        discordLinkTimestamp: new Date(),
+        linkedDiscord: true,
+    };
+    const data = await addOrUpdateSubscriber(updateSubscriber);
+    if (!data)
+        throw new DiscordError(
+            "Failed to update subscriber with discord id!",
+            false,
+        );
+    return true;
 };
 
 export default (<CustomSolution>{
@@ -106,4 +121,5 @@ export default (<CustomSolution>{
         isDiscordOauthEnabled: false,
     },
     subscriberValidator,
+    linkDiscord,
 });
