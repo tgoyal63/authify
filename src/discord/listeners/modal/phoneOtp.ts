@@ -49,7 +49,8 @@ export default async (
                 return;
             }
             await interaction.reply({
-                content: "We couldnt verify your phone number.Please try again or reach out to the support channel.",
+                content:
+                    "We couldnt verify your phone number.Please try again or reach out to the support channel.",
                 ephemeral: true,
             });
         } else {
