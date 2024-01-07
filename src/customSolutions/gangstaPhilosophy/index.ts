@@ -13,12 +13,13 @@ router.get("/", async (req, res) => {
 });
 
 const subscriberValidator = async (
-    mangoes: string,
+    serviceId: string,
     term: string | number,
     discordId: string,
 ) => {
-    const mangoData = await getMangoDetails(mangoes);
+    const mangoData = await getMangoDetails(serviceId);
     if (!mangoData) throw new DiscordError("Mango not found", false);
+    const mangoes = mangoData.mango
     const { customer } = mangoData;
 
     // Fetching from tagMango
