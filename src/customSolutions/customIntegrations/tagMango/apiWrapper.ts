@@ -135,8 +135,18 @@ export const getSubscribers = async ({
             "x-whitelabel-host": credential.domain,
             "Content-Type": "application/json",
             authorization: `Bearer ${credential.accessToken}`,
+            "x-whitelabel-creator": "64ba7f405161b1b6716e0a83",
         },
-        params: { page, type, pageSize, mangoes, term, startDate, endDate },
+        params: {
+            page,
+            type,
+            pageSize,
+            mangoes,
+            term,
+            startDate,
+            endDate,
+            spreadSubscribers: true,
+        },
     };
     const response = await axios(config);
     const result = response.data;

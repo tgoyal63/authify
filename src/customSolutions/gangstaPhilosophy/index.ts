@@ -19,7 +19,7 @@ const subscriberValidator = async (
 ) => {
     const mangoData = await getMangoDetailsFromServiceId(serviceId);
     if (!mangoData) throw new DiscordError("Mango not found", false);
-    const mangoes = mangoData.mango
+    const mangoes = mangoData.mango;
     const { customer } = mangoData;
 
     // Fetching from tagMango
@@ -31,16 +31,16 @@ const subscriberValidator = async (
     });
 
     // if subscriber doesn't exist, return false
-    if (subscriber.length === 0) return false;
+    if (subscriber.subscribers.length === 0) return false;
 
     // check if subscriber is an array of length 1
-    if (subscriber.length !== 1)
+    if (subscriber.subscribers.length > 1)
         throw new DiscordError(
             "Multiple subscribers found, for the same mango and term!",
             false,
         );
 
-    subscriber = subscriber[0];
+    subscriber = subscriber.subscribers[0];
 
     // Fetching from attackmode db
     const dbSubscriber = await getSubscriber(subscriber.fanId);

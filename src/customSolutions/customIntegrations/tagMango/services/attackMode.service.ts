@@ -10,9 +10,7 @@ interface AttackModeSubscriber {
     discordLinkTimestamp: Date;
 }
 
-export const addOrUpdateSubscriber = async (
-    data: AttackModeSubscriber,
-) => {
+export const addOrUpdateSubscriber = async (data: AttackModeSubscriber) => {
     const subscriber = attackModeModel.findOneAndUpdate(
         { tmId: data.tmId },
         data,
