@@ -6,11 +6,14 @@ interface AttackModeSubscriber {
     email: string;
     phone: number;
     name: string;
+    country: string;
     linkedDiscord: boolean;
     discordLinkTimestamp: Date;
 }
 
-export const addOrUpdateSubscriber = async (data: AttackModeSubscriber) => {
+export const addOrUpdateSubscriber = async (
+    data: Partial<AttackModeSubscriber>,
+) => {
     const subscriber = attackModeModel.findOneAndUpdate(
         { tmId: data.tmId },
         data,
@@ -20,7 +23,7 @@ export const addOrUpdateSubscriber = async (data: AttackModeSubscriber) => {
 };
 
 export const addOrUpdateMultipleSubscribers = async (
-    data: AttackModeSubscriber[],
+    data: Partial<AttackModeSubscriber>[],
 ) => {
     const subscribers = attackModeModel.updateMany(
         { tmId: { $in: data.map((d) => d.tmId) } },
