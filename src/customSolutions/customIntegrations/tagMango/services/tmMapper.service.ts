@@ -1,6 +1,11 @@
 import tmMapper from "../models/tmMapper.model";
 
-export const getMangoDetails = async (mango: string) => {
+export const getMangoDetailsFromMangoId = async (mango: string) => {
     const mapper = await tmMapper.findOne({ mango }).exec();
     return mapper;
 };
+
+export const getMangoDetailsFromServiceId = async (serviceId: string) => {
+    const mapper = await tmMapper.findOne({ serviceId }).exec();
+    return mapper;
+}
