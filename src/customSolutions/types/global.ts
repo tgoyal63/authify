@@ -10,5 +10,9 @@ export interface CustomSolution {
     id: string;
     router: Router;
     config: Config;
-    subscriberValidator: (term: string | number) => Promise<boolean>;
+    subscriberValidator: (
+        serviceId: string,
+        term: string | number,
+        discordId: string,
+    ) => Promise<boolean>;
 }
