@@ -1,7 +1,7 @@
 import { getSubscribers } from "../customIntegrations/tagMango/apiWrapper";
 import router from "../customIntegrations/tagMango/routes";
 import { CustomSolution } from "../types";
-import { getMangoDetails } from "../customIntegrations/tagMango/services/tmMapper.service";
+import { getMangoDetailsFromServiceId } from "../customIntegrations/tagMango/services/tmMapper.service";
 import {
     addOrUpdateSubscriber,
     getSubscriber,
@@ -17,7 +17,7 @@ const subscriberValidator = async (
     term: string | number,
     discordId: string,
 ) => {
-    const mangoData = await getMangoDetails(serviceId);
+    const mangoData = await getMangoDetailsFromServiceId(serviceId);
     if (!mangoData) throw new DiscordError("Mango not found", false);
     const mangoes = mangoData.mango
     const { customer } = mangoData;
