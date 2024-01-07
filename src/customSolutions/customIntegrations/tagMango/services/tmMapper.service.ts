@@ -6,6 +6,6 @@ export const getMangoDetailsFromMangoId = async (mango: string) => {
 };
 
 export const getMangoDetailsFromServiceId = async (serviceId: string) => {
-    const mapper = await tmMapper.findOne({ serviceId }).exec();
+    const mapper = await tmMapper.findOne({ service:serviceId }).exec();
     return mapper;
 }
