@@ -7,7 +7,7 @@ import dbConnect from "./utils/dbconn.util";
 import { deployCommandsToGuild } from "./utils/discord.utils";
 
 const corsOptions = {
-    // origin: CORS_ORIGIN,
+    origin: CORS_ORIGIN,
     allowedHeaders: [
         "Content-Type",
         "Authorization",
