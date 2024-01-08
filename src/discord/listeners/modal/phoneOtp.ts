@@ -17,6 +17,10 @@ export default async (
     serviceId: string,
 ) => {
     try {
+        await interaction.reply({
+            content: "Validating User ...",
+            ephemeral: true,
+        });
         const service = await getServiceData(serviceId);
         const phone = interaction.fields.getTextInputValue("phone");
         if (service?.integrationType === "tagMango") {
@@ -24,7 +28,11 @@ export default async (
                 serviceId,
                 +phone
             );
+            console.log(userId)
             if (userId) {
+                await interaction.editReply({
+                    content: "Trying to send OTP ...",
+                });
                 const otp = generateOtpForDiscordId(interaction.user.id, userId);
                 await sendOtp(parseInt(phone), otp);
 
@@ -40,9 +48,8 @@ export default async (
                         verifyButton,
                     );
 
-                await interaction.reply({
+                await interaction.editReply({
                     content: "An OTP has been sent to your phone number.",
-                    ephemeral: true,
                     components: [actionRow],
                 });
                 return;
