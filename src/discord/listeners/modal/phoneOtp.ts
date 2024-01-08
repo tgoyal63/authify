@@ -119,7 +119,7 @@ export default async (
             return;
         }
         await interaction.editReply({
-            content: "An error occurred. Please try again.",
+            content: error?.show && error?.message ? error.message : "An error occurred. Please try again.",
             ephemeral: true,
         });
     }
