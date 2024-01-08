@@ -54,10 +54,9 @@ export default async (
                 });
                 return;
             }
-            await interaction.reply({
+            await interaction.editReply({
                 content:
                     "We couldnt verify your phone number.Please try again or reach out to the support channel.",
-                ephemeral: true,
             });
         } else {
             const { phoneNumbers, discordIds } =
@@ -69,17 +68,15 @@ export default async (
                 return id === interaction.user.id;
             });
             if (existing) {
-                await interaction.reply({
+                await interaction.editReply({
                     content: "You have already registered.",
-                    ephemeral: true,
                 });
                 return;
             }
             if (!phoneNumbers.includes(phone)) {
-                await interaction.reply({
+                await interaction.editReply({
                     content:
                         "Phone number not found in course. Please contact the course admin.",
-                    ephemeral: true,
                 });
                 return;
             }
@@ -89,9 +86,8 @@ export default async (
                 existingDiscordId &&
                 existingDiscordId !== interaction.user.id
             ) {
-                await interaction.reply({
+                await interaction.editReply({
                     content: `Phone number already registered with <@${existingDiscordId}>.`,
-                    ephemeral: true,
                 });
                 return;
             }
@@ -108,23 +104,21 @@ export default async (
                     verifyButton,
                 );
 
-            await interaction.reply({
+            await interaction.editReply({
                 content: "An OTP has been sent to your phone number.",
-                ephemeral: true,
                 components: [actionRow],
             });
         }
     } catch (error: any) {
         console.log(error);
         if (error.message === "Fast2SMS API error.") {
-            await interaction.reply({
+            await interaction.editReply({
                 content:
                     "An error occurred while sending OTP. Please try again.",
-                ephemeral: true,
             });
             return;
         }
-        await interaction.reply({
+        await interaction.editReply({
             content: "An error occurred. Please try again.",
             ephemeral: true,
         });
