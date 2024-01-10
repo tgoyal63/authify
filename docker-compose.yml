@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-    bun-production:
+    calnfalre:
         build:
             context: .
             dockerfile: Dockerfile
