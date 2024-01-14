@@ -58,7 +58,7 @@ const subscriberValidator = async (
         if (!data) throw new DiscordError("Failed to add subscriber!", false);
         return subscriber.fanId;
     }
-    
+
     // if dbSubscriber has different phone number and email, update it and return tagMango subscriber id
     if (
         dbSubscriber.email !== subscriber.fanEmail ||
