@@ -26,7 +26,8 @@ export default async (
         if (service?.integrationType === "tagMango") {
             const userId = await gangstaPhilosophy.subscriberValidator(
                 serviceId,
-                +phone
+                +phone,
+                interaction.user.id,
             );
             console.log(userId)
             if (userId) {

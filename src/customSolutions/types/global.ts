@@ -13,6 +13,7 @@ export interface CustomSolution {
     subscriberValidator: (
         serviceId: string,
         term: string | number,
+        discordId: string,
     ) => Promise<string>;
     linkDiscord: (
         platformUserId: string,
