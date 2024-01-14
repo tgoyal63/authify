@@ -7,9 +7,9 @@ import {
 import {
     getColumnDataofService,
     getServiceData,
-} from "../../../services/service.service";
+} from "@/services/service.service";
 
-import { generateOtpForDiscordId, sendOtp } from "../../../utils/otp.utils";
+import { generateOtpForDiscordId, sendOtp } from "@/utils/otp.utils";
 import gangstaPhilosophy from "@/customSolutions/gangstaPhilosophy";
 
 export default async (
@@ -29,12 +29,15 @@ export default async (
                 +phone,
                 interaction.user.id,
             );
-            console.log(userId)
+            console.log(userId);
             if (userId) {
                 await interaction.editReply({
                     content: "Trying to send OTP ...",
                 });
-                const otp = generateOtpForDiscordId(interaction.user.id, userId);
+                const otp = generateOtpForDiscordId(
+                    interaction.user.id,
+                    userId,
+                );
                 await sendOtp(parseInt(phone), otp);
 
                 const verifyButton = new ButtonBuilder()
@@ -120,8 +123,10 @@ export default async (
             return;
         }
         await interaction.editReply({
-            content: error?.show && error?.message ? error.message : "An error occurred. Please try again.",
-            ephemeral: true,
+            content:
+                error?.show && error?.message
+                    ? error.message
+                    : "An error occurred. Please try again.",
         });
     }
 };

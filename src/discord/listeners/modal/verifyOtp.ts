@@ -30,7 +30,10 @@ export default async (
         });
         let roles = [];
         if (validOtp.userId) {
-            await customSolution.linkDiscord(validOtp.userId, interaction.user.id);
+            await customSolution.linkDiscord(
+                validOtp.userId,
+                interaction.user.id,
+            );
             roles = (await fetchRoles(serviceId)) || [];
         } else {
             roles = await updateDiscordIdForPhoneNumberandFetchRoles(
