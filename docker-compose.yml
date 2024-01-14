@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-    bun-production:
+    clanflare:
         build:
             context: .
             dockerfile: Dockerfile

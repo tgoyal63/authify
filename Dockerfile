@@ -1,15 +1,29 @@
+# Stage 1: Build Stage
+FROM node:lts-alpine3.19 as build
 
-FROM oven/bun:latest 
-WORKDIR /usr/src/app
+WORKDIR /app
 
+COPY package.json yarn.lock /app/
 
-COPY package.json bun.lockb /usr/src/app/
+RUN yarn install --production=false --frozen-lockfile
 
+COPY . .
 
-RUN bun install  --production
+RUN yarn run build
 
-COPY . /usr/src/app
+# Stage 2: Production Stage
+FROM node:lts-alpine3.19
 
+WORKDIR /app
 
-EXPOSE 3000 
-ENTRYPOINT [ "bun","run","start" ]
+ENV NODE_ENV=production
+
+COPY --from=build /app/build/ /app/build/
+COPY package.json yarn.lock /app/
+
+# using npm to ommit dev dependencies as 
+# yarn install dev dep. even if --production=true flag is set which results in 1.61GB image size
+# current image size ~400mb
+RUN npm i --omit=dev --frozen-lockfile
+
+CMD ["yarn","start"]
