@@ -37,12 +37,20 @@ export default {
             return;
         }
 
-        const button = new ButtonBuilder()
+        const phoneButton = new ButtonBuilder()
             .setCustomId(`authifyButton-phone-${service?._id}`)
-            .setLabel("Authenticate with OTP")
+            .setLabel("Authenticate with Phone")
             .setStyle(ButtonStyle.Secondary);
 
-        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+        const emailButton = new ButtonBuilder()
+            .setCustomId(`authifyButton-email-${service?._id}`)
+            .setLabel("Authenticate with Email")
+            .setStyle(ButtonStyle.Secondary);
+
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            phoneButton,
+            emailButton,
+        );
 
         interaction.reply({
             content: "Success",
