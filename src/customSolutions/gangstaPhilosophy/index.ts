@@ -15,6 +15,7 @@ router.get("/", async (req, res) => {
 const subscriberValidator = async (
     serviceId: string,
     term: string | number,
+    discordId: string,
 ) => {
     const mangoData = await getMangoDetailsFromServiceId(serviceId);
     if (!mangoData) throw new DiscordError("Mango not found", false);
@@ -57,35 +58,39 @@ const subscriberValidator = async (
         if (!data) throw new DiscordError("Failed to add subscriber!", false);
         return subscriber.fanId;
     }
-
-    // check if dbSubscriber has discordId and if it has return false
-    if (dbSubscriber.discordId)
-        throw new DiscordError(
-            "Subscriber already linked to another Discord Account!",
-            true,
-        );
-
-    // check if dbSubscriber has same phone number and email, return tagMango subscriber id
-    if (
-        dbSubscriber.email === subscriber.fanEmail &&
-        dbSubscriber.phone === subscriber.fanPhone
-    )
-        return subscriber.fanId;
-
+    
     // if dbSubscriber has different phone number and email, update it and return tagMango subscriber id
     if (
         dbSubscriber.email !== subscriber.fanEmail ||
-        dbSubscriber.phone !== subscriber.fanPhone
+        dbSubscriber.phone !== subscriber.fanPhone ||
+        dbSubscriber.country !== subscriber.fanCountry
     ) {
         const updatedSubscriber = {
             ...dbSubscriber,
             email: subscriber.fanEmail,
             phone: subscriber.fanPhone,
+            country: subscriber.fanCountry,
         };
         const data = await addOrUpdateSubscriber(updatedSubscriber);
         if (!data) throw new DiscordError("Failed to update subscriber", false);
         return subscriber.fanId;
     }
+
+    // check if dbSubscriber has same phone number and email, return tagMango subscriber id
+    if (
+        dbSubscriber.email === subscriber.fanEmail &&
+        dbSubscriber.phone === subscriber.fanPhone &&
+        dbSubscriber.country === subscriber.fanCountry
+    )
+        return subscriber.fanId;
+
+    // check if dbSubscriber has discordId and if it has return false
+    if (dbSubscriber.discordId && dbSubscriber.discordId !== discordId)
+        throw new DiscordError(
+            "Subscriber already linked to another Discord Account!",
+            true,
+        );
+
     return false;
 };
 
