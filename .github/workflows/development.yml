@@ -33,7 +33,7 @@ jobs:
               run: 'echo "${{ secrets.DEV_PEM }}" >> cf-dev.pem'
 
             - name: Giving permissions to PEM file
-              run: sudo chmod 400 cd-dev.pem
+              run: sudo chmod 400 cf-dev.pem
 
             - name: Transfer Files to Remote Server
               run: |
