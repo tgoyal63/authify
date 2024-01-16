@@ -37,10 +37,10 @@ jobs:
 
             - name: Transfer Files to Remote Server
               run: |
-                  scp -i authify_production.pem -o StrictHostKeyChecking=no .env google-credentials.json package.json yarn.lock prod-deploy.sh ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/cf/
-                  scp -i authify_production.pem -r -o StrictHostKeyChecking=no build ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/cf/
+                  scp -i cf-dev.pem -o StrictHostKeyChecking=no .env google-credentials.json package.json yarn.lock prod-deploy.sh ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/cf/
+                  scp -i cf-dev.pem -r -o StrictHostKeyChecking=no build ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/cf/
 
             - name: Yarn install --production
               run: |
-                  ssh -i authify_production.pem -o StrictHostKeyChecking=no ubuntu@ec2-13-232-146-65.ap-south-1.compute.amazonaws.com 'chmod +x ~/cf/deploy.sh'
-                  ssh -i authify_production.pem -o StrictHostKeyChecking=no ubuntu@ec2-13-232-146-65.ap-south-1.compute.amazonaws.com '~/cf/deploy.sh'
+                  ssh -i cf-dev.pem -o StrictHostKeyChecking=no ubuntu@ec2-13-232-146-65.ap-south-1.compute.amazonaws.com 'chmod +x ~/cf/deploy.sh'
+                  ssh -i cf-dev.pem -o StrictHostKeyChecking=no ubuntu@ec2-13-232-146-65.ap-south-1.compute.amazonaws.com '~/cf/deploy.sh'
