@@ -1,0 +1,46 @@
+name: DEV CLANFLARE  
+on:
+    push:
+        branches:
+            - development
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Set up Node.js 
+              uses: actions/setup-node@v3
+
+            - name: Install Dependencies
+              run: yarn Install
+
+            - name: Build
+              run: yarn build
+
+            - name: Making ENV
+              run: |
+                  touch .env
+                  echo "${{ secrets.DEV_ENV }}" > .env
+
+            - name: Creating google credential json
+              run: |
+                  touch google-credentials.json
+                  echo "${{ secrets.DEV_GOOGLE }}" | base64 -d > google-credentials.json
+
+            - name: Create a PEM FILE
+              run: 'echo "${{ secrets.DEV_PEM }}" >> cf-dev.pem'
+
+            - name: Giving permissions to PEM file
+              run: sudo chmod 400 cd-dev.pem
+
+            - name: Transfer Files to Remote Server
+              run: |
+                  scp -i authify_production.pem -o StrictHostKeyChecking=no .env google-credentials.json package.json yarn.lock prod-deploy.sh ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/cf/
+                  scp -i authify_production.pem -r -o StrictHostKeyChecking=no build ubuntu@ec2-3-111-55-43.ap-south-1.compute.amazonaws.com:~/cf/
+
+            - name: Yarn install --production
+              run: |
+                  ssh -i authify_production.pem -o StrictHostKeyChecking=no ubuntu@ec2-13-232-146-65.ap-south-1.compute.amazonaws.com 'chmod +x ~/cf/deploy.sh'
+                  ssh -i authify_production.pem -o StrictHostKeyChecking=no ubuntu@ec2-13-232-146-65.ap-south-1.compute.amazonaws.com '~/cf/deploy.sh'
