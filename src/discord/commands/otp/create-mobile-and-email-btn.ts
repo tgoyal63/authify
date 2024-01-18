@@ -11,8 +11,8 @@ import { getServicesOfDiscordGuild } from "../../../services/service.service";
 
 export default {
     data: new SlashCommandBuilder()
-        .setName("create-otp-mobile-button")
-        .setDescription("creates a otp button"),
+        .setName("create-mobile-and-email-button")
+        .setDescription("creates an otp button with Email and Phone options"),
 
     async execute(interaction: ChatInputCommandInteraction) {
         const permissions = interaction.member
