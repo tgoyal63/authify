@@ -36,6 +36,7 @@ export const getServicesController = ApiHandler(
             const guild = guilds.find((guild) => guild.id === service.guildId);
             return {
                 ...service,
+                guild:{...service.guild,icon:`https://cdn.discordapp.com/icons/${guild.id}/${service.guild.icon}.webp`},
                 guild: guild,
             };
         });
