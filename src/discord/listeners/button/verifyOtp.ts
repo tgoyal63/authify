@@ -13,7 +13,7 @@ export default async (
 ) => {
     const modal = new ModalBuilder()
         .setCustomId(`authifyModal-verifyPhone-${serviceId}-${sentTo}`)
-        .setTitle(`Enter OTP sent to ${sentTo}`);
+        .setTitle("Enter OTP sent to you.");
 
     const otpInput = new TextInputBuilder()
         .setCustomId("otp")
