@@ -4,31 +4,51 @@ import buttonListener from "./listeners/button";
 import commandListener from "./listeners/command.listener";
 import modalListener from "./listeners/modal";
 
-const token = TOKEN;
-
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 });
 
 client.once("ready", (c) => {
-    console.log(`Ready! Logged in as ${c.user.tag}`);
+  console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
-    buttonListener(interaction);
-    modalListener(interaction);
-    commandListener(interaction);
+  try {
+    await buttonListener(interaction);
+    await modalListener(interaction);
+    await commandListener(interaction);
+  } catch (error) {
+    console.error("Error handling interaction:", error);
+  }
 });
 
-client.on(Events.Error, (e) => {
-    client.login(token);
-    console.log("Reconnecting...", e);
+client.on(Events.Error, (error) => {
+  console.error("Client error:", error);
+  client
+    .login(TOKEN)
+    .then(() => {
+      console.log("Reconnected");
+    })
+    .catch((loginError) => {
+      console.error("Error during reconnection:", loginError);
+    });
 });
 
-process.on("unhandledRejection", console.error);
-process.on("uncaughtException", console.error);
-process.on("uncaughtExceptionMonitor", console.error);
+// Global error handling
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Rejection:", reason);
+});
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+});
+process.on("uncaughtExceptionMonitor", (error) => {
+  console.error("Uncaught Exception Monitor:", error);
+});
 
 export default client;
 
-export const loginToBot = () => client.login(token);
+export const loginToBot = () => {
+  client.login(TOKEN).catch((error) => {
+    console.error("Error logging in:", error);
+  });
+};

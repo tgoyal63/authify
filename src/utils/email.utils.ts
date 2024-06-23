@@ -1,40 +1,46 @@
 import {
-    SESClient,
-    SESClientConfig,
-    SendEmailCommand,
+  SESClient,
+  SESClientConfig,
+  SendEmailCommand,
 } from "@aws-sdk/client-ses";
 
 const SES_CONFIG: SESClientConfig = {
-    region: process.env.AWS_REGION || "",
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-    },
+  region: process.env.AWS_REGION || "",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+  },
 };
 
 const ses = new SESClient(SES_CONFIG);
 
+/**
+ * Sends an email using AWS SES
+ * @param to Recipient email address
+ * @param subject Email subject
+ * @param body Email body content
+ * @returns {Promise<void>}
+ */
 export const sendEmail = async (to: string, subject: string, body: string) => {
-    const params = {
-        Destination: {
-            ToAddresses: [to],
+  const params = {
+    Destination: {
+      ToAddresses: [to],
+    },
+    Message: {
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: body,
         },
-        Message: {
-            Body: {
-                Html: {
-                    Charset: "UTF-8",
-                    Data: body,
-                },
-            },
-            Subject: {
-                Charset: "UTF-8",
-                Data: subject,
-            },
-        },
-        Source: process.env.EMAIL_FROM,
-    };
+      },
+      Subject: {
+        Charset: "UTF-8",
+        Data: subject,
+      },
+    },
+    Source: process.env.EMAIL_FROM,
+  };
 
-    const command = new SendEmailCommand(params);
-
-    return ses.send(command);
+  const command = new SendEmailCommand(params);
+  return ses.send(command);
 };
