@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { verifyJWT } from "../utils/jwt.utils";
 import { getDiscordUser } from "../utils/oauth.utils";
 import { Customer } from "@/types/common";
+import { ControllerError } from "@/types/error/controller-error";
 
 export default async function authMiddleware(
   req: Request,
@@ -11,22 +12,17 @@ export default async function authMiddleware(
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      res.status(401).json({ message: "Authorization header not found" });
-      return;
+      throw new ControllerError("Authorization header not found", 401);
     }
 
-    const token = authHeader.split(" ")[1]; // Assuming a header like "Bearer <token>"
+    const token = authHeader.split(" ")[1];
     if (!token) {
-      res
-        .status(401)
-        .json({ message: "Token not found in Authorization header" });
-      return;
+      throw new ControllerError("Token not found in Authorization header", 401);
     }
 
     const userData = verifyJWT(token);
     if (!userData) {
-      res.status(401).json({ message: "Invalid token" });
-      return;
+      throw new ControllerError("Invalid token", 401);
     }
 
     const customer: Customer = {
@@ -43,7 +39,10 @@ export default async function authMiddleware(
     req.customer = customer;
     next();
   } catch (error: any) {
-    res.status(401).json({ message: error.message });
-    return;
+    if (error instanceof ControllerError) {
+      res.status(error.code).json({ message: error.message });
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
   }
 }

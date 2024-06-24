@@ -1,73 +1,62 @@
 import attackModeModel from "../models/attackMode.model";
 
 interface AttackModeSubscriber {
-    discordId: string;
-    tmId: string;
-    email: string;
-    phone: number;
-    name: string;
-    country: string;
-    linkedDiscord: boolean;
-    discordLinkTimestamp: Date;
+  discordId: string;
+  tmId: string;
+  email: string;
+  phone: number;
+  name: string;
+  country: string;
+  linkedDiscord: boolean;
+  discordLinkTimestamp: Date;
 }
 
 export const addOrUpdateSubscriber = async (
-    data: Partial<AttackModeSubscriber>,
+  data: Partial<AttackModeSubscriber>
 ) => {
-    const subscriber = attackModeModel.findOneAndUpdate(
-        { tmId: data.tmId },
-        data,
-        { upsert: true, new: true },
-    );
-    return subscriber;
+  return attackModeModel
+    .findOneAndUpdate({ tmId: data.tmId }, data, { upsert: true, new: true })
+    .exec();
 };
 
 export const addOrUpdateMultipleSubscribers = async (
-    data: Partial<AttackModeSubscriber>[],
+  data: Partial<AttackModeSubscriber>[]
 ) => {
-    const subscribers = attackModeModel.bulkWrite(
-        data.map((subscriber) => ({
-            updateOne: {
-                filter: { tmId: subscriber.tmId },
-                update: subscriber,
-                upsert: true,
-            },
-        })),
-    );
-    return subscribers;
+  return attackModeModel.bulkWrite(
+    data.map((subscriber) => ({
+      updateOne: {
+        filter: { tmId: subscriber.tmId },
+        update: subscriber,
+        upsert: true,
+      },
+    }))
+  );
 };
 
 export const getSubscriberByTmId = async (tmId: string) => {
-    const subscriber = attackModeModel.findOne({ tmId });
-    return subscriber;
+  return attackModeModel.findOne({ tmId }).exec();
 };
 
 export const getAllSubscribers = async () => {
-    const subscribers = attackModeModel.find({});
-    return subscribers;
+  return attackModeModel.find({}).exec();
 };
 
 export const getSubscriberByDiscordId = async (discordId: string) => {
-    const subscriber = attackModeModel.findOne({ discordId });
-    return subscriber;
+  return attackModeModel.findOne({ discordId }).exec();
 };
 
 export const getSubscriberByPhone = async (phone: number) => {
-    const subscriber = attackModeModel.findOne({ phone });
-    return subscriber;
+  return attackModeModel.findOne({ phone }).exec();
 };
 
 export const getSubscriberByEmail = async (email: string) => {
-    const subscriber = attackModeModel.findOne({ email });
-    return subscriber;
+  return attackModeModel.findOne({ email }).exec();
 };
 
-export const getSubscriber = async (query: {
-    discordId?: string;
-    tmId?: string;
-    email?: string;
-    phone?: number;
-}) => {
-    const subscriber = attackModeModel.findOne(query);
-    return subscriber;
+export const getSubscriber = async (
+  query: Partial<
+    Pick<AttackModeSubscriber, "discordId" | "tmId" | "email" | "phone">
+  >
+) => {
+  return attackModeModel.findOne(query).exec();
 };

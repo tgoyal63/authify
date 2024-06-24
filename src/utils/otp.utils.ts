@@ -15,8 +15,7 @@ const otpCollection = new Collection<string, OtpData>();
  * @returns a 6 digit OTP
  */
 export const generateOtp = (): number => {
-  const otp = crypto.randomInt(100000, 999999);
-  return otp;
+  return crypto.randomInt(100000, 999999);
 };
 
 /**
@@ -52,9 +51,8 @@ export const verifyOtpForDiscordId = (
   const existing = otpCollection.get(discordId);
   if (existing?.otp === otp) {
     otpCollection.delete(discordId);
-    return existing;
   }
-  return undefined;
+  return existing;
 };
 
 /**
@@ -69,11 +67,10 @@ export const generateOtpHash = (
   otp: number,
   expiresAt: number
 ): string => {
-  const otpHash = crypto
+  return crypto
     .createHmac("sha256", OTP_SECRET)
     .update(`${phone}-${otp}-${expiresAt}`)
     .digest("hex");
-  return otpHash;
 };
 
 /**
@@ -98,7 +95,7 @@ export const sendOtp = async (phone: number, otp: number): Promise<void> => {
       throw new Error(response.data.message[0] || "Fast2SMS API error.");
     }
   } catch (error: any) {
-    console.error("Fast2SMS API error:", error);
+    console.error({ "Fast2SMS API error": error });
     throw new Error("Fast2SMS API error.");
   }
 };

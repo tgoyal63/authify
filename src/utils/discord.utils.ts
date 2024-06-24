@@ -15,9 +15,15 @@ for (const folder of commandFolders) {
   const commandsPath = path.join(foldersPath, folder);
   const commandFiles = fs
     .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".ts") || file.endsWith(".js"));
+    .filter((file) => file.endsWith(".ts") || file.endsWith("js"));
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
+    importCommand(filePath);
+  }
+}
+
+async function importCommand(filePath: string) {
+  try {
     const { default: command } = await import(filePath);
     if ("data" in command && "execute" in command) {
       commands.set(command.data.name, command.data.toJSON());
@@ -26,6 +32,8 @@ for (const folder of commandFolders) {
         `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
       );
     }
+  } catch (error) {
+    console.error(`Error importing ${filePath}: ${error}`);
   }
 }
 
@@ -38,7 +46,7 @@ export const deployCommandsToGuild = async (guildId: string) => {
   const data = (await rest.put(
     Routes.applicationGuildCommands(CLIENT_ID, guildId),
     {
-      body: Array.from(commands.values()),
+      body: commands,
     }
   )) as any;
 

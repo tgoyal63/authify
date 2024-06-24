@@ -21,6 +21,10 @@ async function dbConnect(): Promise<void> {
       console.error("Connection error:", error);
       throw error;
     });
+    mongoose.connection.on("disconnected", () => {
+      console.warn("MongoDB disconnected, attempting reconnection...");
+      setTimeout(dbConnect, 5000);
+    });
   } catch (error) {
     console.error("Connection error:", error);
     throw error;

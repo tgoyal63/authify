@@ -22,6 +22,8 @@ const ses = new SESClient(SES_CONFIG);
  * @returns {Promise<void>}
  */
 export const sendEmail = async (to: string, subject: string, body: string) => {
+  if (!to || !subject || !body)
+    throw new Error("Missing required parameters for sendEmail");
   const params = {
     Destination: {
       ToAddresses: [to],
@@ -42,5 +44,10 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
   };
 
   const command = new SendEmailCommand(params);
-  return ses.send(command);
+  try {
+    return await ses.send(command);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error("Failed to send email");
+  }
 };

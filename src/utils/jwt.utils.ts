@@ -16,14 +16,24 @@ export interface JWTObject {
  * @returns A signed JWT token
  */
 export const signJWT = (object: JWTObject, expiresIn: string) => {
-  return jwt.sign(object, JWT_SECRET, { expiresIn });
+  try {
+    return jwt.sign(object, JWT_SECRET, { expiresIn });
+  } catch (error) {
+    console.error("Error signing JWT:", error);
+    throw new Error("Failed to sign JWT");
+  }
 };
 
 /**
- * Verifies the given JWT token
+ * Verifies the given JWT token using the JWT_SECRET config variable.
  * @param token JWT token to be verified
  * @returns The decoded token
  */
-export const verifyJWT = (token: string): JWTObject => {
-  return jwt.verify(token, JWT_SECRET) as JWTObject;
+export const verifyJWT = (token: string) => {
+  try {
+    return jwt.verify(token, JWT_SECRET) as JWTObject;
+  } catch (error) {
+    console.error("Error verifying JWT:", error);
+    throw new Error("Failed to verify JWT");
+  }
 };

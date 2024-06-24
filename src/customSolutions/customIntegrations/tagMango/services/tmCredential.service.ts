@@ -1,33 +1,29 @@
-import tmCredential from "../models/tmCredential.model";
+import tmCredentialModel from "../models/tmCredential.model";
 
 export const createCredential = async ({
-    customerId,
-    accessToken,
-    refreshToken,
-    phone,
-    domain,
-    serviceId,
+  customerId,
+  accessToken,
+  refreshToken,
+  phone,
+  domain,
+  serviceId,
 }: {
-    customerId?: string;
-    accessToken: string;
-    refreshToken: string;
-    phone: number;
-    domain: string;
-    serviceId: string;
+  customerId?: string;
+  accessToken: string;
+  refreshToken: string;
+  phone: number;
+  domain: string;
+  serviceId: string;
 }) => {
-    const credential = await tmCredential
-        .updateOne(
-            { service: serviceId },
-            { accessToken, refreshToken, phone, domain, customer: customerId },
-            { upsert: true },
-        )
-        .exec();
-    return credential;
+  return tmCredentialModel
+    .updateOne(
+      { service: serviceId },
+      { accessToken, refreshToken, phone, domain, customer: customerId },
+      { upsert: true }
+    )
+    .exec();
 };
 
 export const getCredential = async (serviceId: string) => {
-    const credential = await tmCredential
-        .findOne({ service: serviceId })
-        .exec();
-    return credential;
+  return tmCredentialModel.findOne({ service: serviceId }).exec();
 };

@@ -3,6 +3,7 @@ import { TypedRequestQuery } from "zod-express-middleware";
 import client from "@/discord";
 import { guildIdValidator } from "@/inputValidators/service.validators";
 import { ApiHandler } from "@/utils/api-handler.util";
+import { ControllerError } from "@/types/error/controller-error";
 
 export const getAvailableRolesController = ApiHandler(
   async (
@@ -15,7 +16,7 @@ export const getAvailableRolesController = ApiHandler(
       const guild = await client.guilds.fetch(guildId);
 
       if (!guild.members.me?.roles.highest) {
-        throw new Error("Bot is not in the guild");
+        throw new ControllerError("Bot is not in the guild", 400);
       }
 
       const botHighestRole = guild.members.me.roles.highest;

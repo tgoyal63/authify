@@ -13,31 +13,28 @@ import {
   getInternalSheets,
 } from "@/utils/sheet.utils";
 import { ApiHandler } from "@/utils/api-handler.util";
+import { ControllerError } from "@/types/error/controller-error";
+
+const extractSpreadsheetId = (spreadSheetUrl: string) => {
+  const sheetSplit = spreadSheetUrl.match(sheetRegex);
+  if (!sheetSplit) throw new ControllerError("No sheet found", 400);
+  return sheetSplit[1] as string;
+};
 
 export const getInternalSheetController = ApiHandler(
   async (
     req: TypedRequestQuery<typeof getInternalSheetValidator.query>,
     res: Response
   ) => {
-    const sheetSplit = req.query.spreadSheetUrl.match(sheetRegex);
-    if (!sheetSplit) {
-      return res.send({ success: false, message: "No sheet found" });
-    }
-
-    const spreadSheetId = sheetSplit[1] as string;
+    const spreadSheetId = extractSpreadsheetId(req.query.spreadSheetUrl);
     const internalSheetData = await getInternalSheets(spreadSheetId);
-    if (!internalSheetData) {
-      return res.send({ success: false, message: "No sheet found" });
-    }
+    if (!internalSheetData) throw new ControllerError("No sheet found", 404);
 
-    const responseData = internalSheetData.map((sheet) => {
-      return {
-        sheetId: sheet.properties?.sheetId,
-        title: sheet.properties?.title,
-        index: sheet.properties?.index,
-      };
-    });
-
+    const responseData = internalSheetData.map((sheet) => ({
+      sheetId: sheet.properties?.sheetId,
+      title: sheet.properties?.title,
+      index: sheet.properties?.index,
+    }));
     return res.send({
       success: true,
       data: responseData,
@@ -51,10 +48,7 @@ export const validateSheetHeadersController = ApiHandler(
     req: TypedRequestQuery<typeof sheetHeadersValidator.query>,
     res: Response
   ) => {
-    const sheetSplit = req.query.spreadSheetUrl.match(sheetRegex);
-    if (!sheetSplit) throw new Error("No sheet found");
-
-    const spreadSheetId = sheetSplit[1] as string;
+    const spreadSheetId = extractSpreadsheetId(req.query.spreadSheetUrl);
     const { sheetName, phoneCell, emailCell, discordIdCell } = req.query;
 
     const [phoneNumberHeader, emailHeader, discordIdHeader] = await Promise.all(
@@ -82,10 +76,7 @@ export const getSheetHeadersController = ApiHandler(
     req: TypedRequestQuery<typeof sheetHeadersValidatorV2.query>,
     res: Response
   ) => {
-    const sheetSplit = req.query.spreadSheetUrl.match(sheetRegex);
-    if (!sheetSplit) throw new Error("No sheet found");
-
-    const spreadSheetId = sheetSplit[1] as string;
+    const spreadSheetId = extractSpreadsheetId(req.query.spreadSheetUrl);
     const { sheetName, headerRow } = req.query;
     const headerRowData = await getColumnData(
       spreadSheetId,
@@ -99,7 +90,7 @@ export const getSheetHeadersController = ApiHandler(
       !headerRowData.values[0] ||
       headerRowData.values[0].length === 0
     ) {
-      throw new Error("Invalid Row");
+      throw new ControllerError("Invalid Row", 400);
     }
 
     res.send({

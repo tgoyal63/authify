@@ -19,6 +19,33 @@ import {
 } from "@/utils/oauth.utils";
 import { FRONTEND_CLIENT_URL, OTP_EXPIRY_TIME } from "@/config";
 import { ApiHandler } from "@/utils/api-handler.util";
+import { ControllerError } from "@/types/error/controller-error";
+
+const handleUserCreation = async (user: any, token: any) => {
+  if (!user.verified || !user.email) {
+    throw new ControllerError("EmailNotVerified", 400);
+  }
+
+  const createdCustomer = await createCustomer(
+    user.id,
+    user.username,
+    user.email as string,
+    token.refresh_token,
+    token.access_token,
+    token.expires_in,
+    token.scope
+  );
+
+  return signJWT(
+    {
+      id: createdCustomer._id,
+      discordId: user.id,
+      accessToken: token.access_token,
+      email: user.email as string,
+    },
+    `${token.expires_in}s`
+  );
+};
 
 export const callbackController = ApiHandler(
   async (req: Request, res: Response) => {
@@ -32,66 +59,35 @@ export const callbackController = ApiHandler(
     }
 
     if (!code) {
-      throw new Error("Authentication Failed");
+      throw new ControllerError("Authentication Failed", 400);
     }
 
     const token = await getTokens(code);
     const user = await getDiscordUser(token.access_token);
     const customer = await getCustomerByDiscordId(user.id);
+    let jwt;
 
     if (!customer) {
-      if (!user.verified || !user.email) {
-        throw new Error("EmailNotVerified");
-      }
-
-      const createdCustomer = await createCustomer(
+      jwt = await handleUserCreation(user, token);
+    } else {
+      await renewCredentials(
         user.id,
-        user.username,
-        user.email as string,
         token.refresh_token,
         token.access_token,
         token.expires_in,
         token.scope
       );
-      const jwt = signJWT(
+      jwt = signJWT(
         {
-          id: createdCustomer._id,
+          id: customer._id,
           discordId: user.id,
           accessToken: token.access_token,
-          email: user.email as string,
+          phone: String(customer.phone),
+          email: customer.email,
         },
-        `${token.expires_in}s`
-      );
-
-      const params = new URLSearchParams({
-        token: jwt,
-        phone: "",
-        type: "signup",
-      });
-
-      return res.redirect(
-        `${FRONTEND_CLIENT_URL}/auth/callback-url?${params.toString()}`
+        "14d" // 14 days
       );
     }
-
-    await renewCredentials(
-      user.id,
-      token.refresh_token,
-      token.access_token,
-      token.expires_in,
-      token.scope
-    );
-
-    const jwt = signJWT(
-      {
-        id: customer._id,
-        discordId: user.id,
-        accessToken: token.access_token,
-        phone: String(customer.phone),
-        email: customer.email,
-      },
-      "14d" // 14 days
-    );
 
     const params = new URLSearchParams({
       token: jwt,
@@ -147,7 +143,7 @@ export const verifyOtpController = ApiHandler(
     );
 
     if (otpHash !== req.body.otpHash) {
-      throw new Error("Invalid OTP");
+      throw new ControllerError("Invalid OTP", 400);
     }
 
     await updatePhone(req.customer.id, req.body.phone);
