@@ -7,24 +7,44 @@ export const cellOfASpreadSheetRegex = /^[A-Z]+[0-9]+$/;
 
 export const getInternalSheetValidator = {
   query: z.object({
-    spreadSheetUrl: z.string().regex(sheetRegex),
+    spreadSheetUrl: z
+      .string()
+      .regex(sheetRegex, { message: "Invalid spreadsheet URL format." }),
   }),
 };
 
 export const sheetHeadersValidator = {
   query: z.object({
-    spreadSheetUrl: z.string().regex(sheetRegex),
+    spreadSheetUrl: z
+      .string()
+      .regex(sheetRegex, { message: "Invalid spreadsheet URL format." }),
     sheetName: z.string(),
-    phoneCell: z.string().regex(cellOfASpreadSheetRegex),
-    emailCell: z.string().regex(cellOfASpreadSheetRegex),
-    discordIdCell: z.string().regex(cellOfASpreadSheetRegex),
+    phoneCell: z
+      .string()
+      .regex(cellOfASpreadSheetRegex, {
+        message: "Invalid cell format for phone number.",
+      }),
+    emailCell: z
+      .string()
+      .regex(cellOfASpreadSheetRegex, {
+        message: "Invalid cell format for email.",
+      }),
+    discordIdCell: z
+      .string()
+      .regex(cellOfASpreadSheetRegex, {
+        message: "Invalid cell format for Discord ID.",
+      }),
   }),
 };
 
 export const sheetHeadersValidatorV2 = {
   query: z.object({
-    spreadSheetUrl: z.string().regex(sheetRegex),
+    spreadSheetUrl: z
+      .string()
+      .regex(sheetRegex, { message: "Invalid spreadsheet URL format." }),
     sheetName: z.string(),
-    headerRow: z.string().regex(/^\d+$/),
+    headerRow: z
+      .string()
+      .regex(/^\d+$/, { message: "Header row must be a number." }),
   }),
 };
