@@ -8,7 +8,7 @@ export default async function authMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
-) {
+): Promise<void> {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -31,18 +31,17 @@ export default async function authMiddleware(
       accessToken: userData.accessToken,
       phone: userData.phone,
       email: userData.email,
-      getDiscordUser: async () => {
-        return await getDiscordUser(userData.accessToken);
-      },
+      getDiscordUser: async () => await getDiscordUser(userData.accessToken),
     };
 
     req.customer = customer;
     next();
   } catch (error: any) {
     if (error instanceof ControllerError) {
-      res.status(error.code).json({ message: error.message });
+      res.status(error.code).json({ success: false, message: error.message });
     } else {
-      res.status(401).json({ message: "Unauthorized" });
+      console.error("Unexpected error in auth middleware:", error);
+      res.status(401).json({ success: false, message: "Unauthorized" });
     }
   }
 }
