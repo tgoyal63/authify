@@ -1,7 +1,9 @@
 {
 	"compilerOptions": {
 		"target": "ESNext",
-		"lib": ["ES2023"],
+		"lib": [
+			"ES2023"
+		],
 		"module": "ES2022",
 		"allowJs": false,
 		"skipLibCheck": true,
@@ -19,7 +21,10 @@
 		"noUnusedParameters": false,
 		"noImplicitAny": true,
 		"pretty": true,
-		"typeRoots": ["src/@types", "./node_modules/@types"],
+		"typeRoots": [
+			"src/@types",
+			"./node_modules/@types"
+		],
 		"noEmit": false,
 		"esModuleInterop": true,
 		"moduleResolution": "Node",
@@ -27,8 +32,14 @@
 		"isolatedModules": true,
 		"baseUrl": "src",
 		"paths": {
-			"@/*": ["./*"]
+			"@/*": [
+				"./*"
+			]
 		}
 	},
-	"include": ["src/**/*", "commitlint.config.js", "./jest.config.ts"]
+	"include": [
+		"src/**/*",
+		"commitlint.config.js",
+		"./jest.config.ts"
+	]
 }

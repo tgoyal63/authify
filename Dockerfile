@@ -21,9 +21,9 @@ ENV NODE_ENV=production
 COPY --from=build /app/build/ /app/build/
 COPY package.json yarn.lock /app/
 
-# using npm to ommit dev dependencies as 
-# yarn install dev dep. even if --production=true flag is set which results in 1.61GB image size
+# Using npm to omit dev dependencies as 
+# yarn install includes them even with --production flag
 # current image size ~400mb
-RUN npm i --omit=dev --frozen-lockfile
+RUN npm install --omit=dev --frozen-lockfile
 
-CMD ["yarn","start"]
+CMD ["yarn", "start"]
