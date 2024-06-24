@@ -4,7 +4,7 @@ import { NGROK_AUTHTOKEN, NGROK_DOMAIN, PORT } from "../config";
  * Starts ngrok with the specified configuration
  * @returns {Promise<string>} The URL of the ngrok tunnel
  */
-export default async () => {
+export default async (): Promise<string> => {
   const ngrok = await import("@ngrok/ngrok");
   let ngrokURL = "";
 
@@ -12,24 +12,33 @@ export default async () => {
     if (NGROK_AUTHTOKEN && NGROK_DOMAIN) {
       const listener = await ngrok.connect({
         addr: PORT,
-        authtoken: NGROK_AUTHTOKEN as string,
-        domain: NGROK_DOMAIN as string,
+        authtoken: NGROK_AUTHTOKEN,
+        domain: NGROK_DOMAIN,
       });
-      ngrokURL = listener.url() as string;
+      ngrokURL = listener.url() || "";
     } else {
       const listener = await ngrok.connect({ addr: PORT });
-      ngrokURL = listener.url() as string;
+      ngrokURL = listener.url() || "";
     }
   } catch (error) {
-    console.log(
-      "\n[NGROK] Invalid Domain or Auth Token. Please check your .env file.\nStarting ngrok on random domain."
+    console.error(
+      "[NGROK] Error starting ngrok with specified domain or auth token. Falling back to random domain.",
+      error
     );
-    const listener = await ngrok.connect({ addr: PORT });
-    ngrokURL = listener.url() as string;
+    try {
+      const listener = await ngrok.connect({ addr: PORT });
+      ngrokURL = listener.url() || "";
+    } catch (fallbackError) {
+      console.error(
+        "[NGROK] Failed to start ngrok on a random domain.",
+        fallbackError
+      );
+      return "";
+    }
   }
 
   if (ngrokURL) {
-    console.log(`\n[NGROK] Started on ${ngrokURL}\n`);
+    console.log(`[NGROK] Started on ${ngrokURL}\n`);
     return ngrokURL;
   }
 

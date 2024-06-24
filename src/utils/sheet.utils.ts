@@ -16,6 +16,10 @@ const googleSheets: sheets_v4.Sheets = google.sheets({ version: "v4", auth });
 export const getInternalSheets = async (
   spreadsheetId: string
 ): Promise<sheets_v4.Schema$Sheet[] | undefined> => {
+  if (!spreadsheetId) {
+    throw new Error("Spreadsheet ID is required to get internal sheets.");
+  }
+
   try {
     const metaData = await googleSheets.spreadsheets.get({
       auth,
@@ -41,6 +45,12 @@ export const getColumnData = async (
   sheetName: string,
   column: string
 ): Promise<sheets_v4.Schema$ValueRange> => {
+  if (!spreadsheetId || !sheetName || !column) {
+    throw new Error(
+      "Spreadsheet ID, sheet name, and column are required to get column data."
+    );
+  }
+
   try {
     const sheetData = await googleSheets.spreadsheets.values.get({
       auth,
@@ -65,6 +75,12 @@ export const getInternalSheet = async (
   spreadsheetId: string,
   sheetId: number
 ): Promise<sheets_v4.Schema$Sheet | undefined> => {
+  if (!spreadsheetId || sheetId === undefined) {
+    throw new Error(
+      "Spreadsheet ID and sheet ID are required to get internal sheet."
+    );
+  }
+
   try {
     const allSheets = await getInternalSheets(spreadsheetId);
     const sheet = allSheets?.find(
@@ -88,6 +104,12 @@ export const getSheetData = async (
   spreadsheetId: string,
   sheetName: string
 ): Promise<sheets_v4.Schema$ValueRange> => {
+  if (!spreadsheetId || !sheetName) {
+    throw new Error(
+      "Spreadsheet ID and sheet name are required to get sheet data."
+    );
+  }
+
   try {
     const sheetData = await googleSheets.spreadsheets.values.get({
       auth,
@@ -114,6 +136,12 @@ export const getCell = async (
   sheetName: string,
   cell: string
 ): Promise<string | undefined> => {
+  if (!spreadsheetId || !sheetName || !cell) {
+    throw new Error(
+      "Spreadsheet ID, sheet name, and cell are required to get cell value."
+    );
+  }
+
   try {
     const sheetData = await googleSheets.spreadsheets.values.get({
       auth,
@@ -142,6 +170,12 @@ export const editCell = async (
   cell: string,
   value: string
 ): Promise<string | undefined> => {
+  if (!spreadsheetId || !sheetName || !cell || !value) {
+    throw new Error(
+      "Spreadsheet ID, sheet name, cell, and value are required to update cell value."
+    );
+  }
+
   try {
     const sheetData = await googleSheets.spreadsheets.values.update({
       auth,

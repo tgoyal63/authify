@@ -10,13 +10,13 @@ const foldersPath = path.resolve(currentDir, "../discord/commands");
 const commandFolders = fs.readdirSync(foldersPath);
 
 /**
+ * Imports a command file and adds it to the commands collection
  * @param filePath The path to the command file
- * @description Imports a command file and adds it to the commands collection
  */
-async function importCommand(filePath: string) {
+async function importCommand(filePath: string): Promise<void> {
   try {
     const { default: command } = await import(filePath);
-    if ("data" in command && "execute" in command) {
+    if (command?.data?.name && command?.execute) {
       commands.set(command.data.name, command);
     } else {
       console.warn(
@@ -24,11 +24,11 @@ async function importCommand(filePath: string) {
       );
     }
   } catch (error) {
-    console.error(`Error importing ${filePath}: ${error}`);
+    console.error(`Error importing ${filePath}:`, error);
   }
 }
 
-(async () => {
+(async (): Promise<void> => {
   for (const folder of commandFolders) {
     const commandsPath = path.join(foldersPath, folder);
     const commandFiles = fs

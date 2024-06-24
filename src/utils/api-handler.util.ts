@@ -17,12 +17,12 @@ export const ApiHandler =
     >
   ): Controller<RequestParams, ResponseBody, RequestBody, QueryParams> =>
   async (req, res, next) => {
-    const { DiscordHTTPError, DiscordRESTError } = await DiscordOAuth2;
-
     try {
       return await controllerFunc(req, res, next);
     } catch (error) {
       console.error("Error in API handler:", error);
+      const { DiscordHTTPError, DiscordRESTError } = await DiscordOAuth2;
+
       if (
         error instanceof DiscordHTTPError ||
         error instanceof DiscordRESTError
@@ -44,7 +44,7 @@ export const ApiHandler =
 
       return res.status(500).json({
         success: false,
-        error: "Internal Server Error!!",
+        error: "Internal Server Error",
         code: 500,
       });
     }

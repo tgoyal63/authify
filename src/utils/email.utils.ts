@@ -1,14 +1,21 @@
 import {
+  AWS_ACCESS_KEY_ID,
+  AWS_REGION,
+  AWS_SECRET_ACCESS_KEY,
+  EMAIL_FROM,
+} from "@/config";
+import {
   SESClient,
   SESClientConfig,
   SendEmailCommand,
+  SendEmailCommandOutput,
 } from "@aws-sdk/client-ses";
 
 const SES_CONFIG: SESClientConfig = {
-  region: process.env.AWS_REGION || "",
+  region: AWS_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
   },
 };
 
@@ -19,11 +26,19 @@ const ses = new SESClient(SES_CONFIG);
  * @param to Recipient email address
  * @param subject Email subject
  * @param body Email body content
- * @returns {Promise<void>}
+ * @returns {Promise<SendEmailCommandOutput>}
+ * @throws {Error} If any required parameter is missing or email fails to send
  */
-export const sendEmail = async (to: string, subject: string, body: string) => {
-  if (!to || !subject || !body)
-    throw new Error("Missing required parameters for sendEmail");
+export const sendEmail = async (
+  to: string,
+  subject: string,
+  body: string
+): Promise<SendEmailCommandOutput> => {
+  if (!to)
+    throw new Error("Recipient email address is required for sendEmail.");
+  if (!subject) throw new Error("Email subject is required for sendEmail.");
+  if (!body) throw new Error("Email body content is required for sendEmail.");
+
   const params = {
     Destination: {
       ToAddresses: [to],
@@ -40,7 +55,7 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
         Data: subject,
       },
     },
-    Source: process.env.EMAIL_FROM,
+    Source: EMAIL_FROM,
   };
 
   const command = new SendEmailCommand(params);

@@ -51,8 +51,9 @@ export const verifyOtpForDiscordId = (
   const existing = otpCollection.get(discordId);
   if (existing?.otp === otp) {
     otpCollection.delete(discordId);
+    return existing;
   }
-  return existing;
+  return undefined;
 };
 
 /**
@@ -77,10 +78,14 @@ export const generateOtpHash = (
  * Sends the OTP to the given phone number using the Fast2SMS API
  * @param phone The phone number to send the OTP to
  * @param otp The OTP to send
- * @returns void
- * @throws {Error}
+ * @returns {Promise<void>}
+ * @throws {Error} If the Fast2SMS API request fails
  */
 export const sendOtp = async (phone: number, otp: number): Promise<void> => {
+  if (!phone || !otp) {
+    throw new Error("Phone number and OTP are required to send an OTP.");
+  }
+
   try {
     const response = await axios.get("https://www.fast2sms.com/dev/bulkV2", {
       params: {
@@ -94,8 +99,8 @@ export const sendOtp = async (phone: number, otp: number): Promise<void> => {
     if (response.data.return === false) {
       throw new Error(response.data.message[0] || "Fast2SMS API error.");
     }
-  } catch (error: any) {
-    console.error({ "Fast2SMS API error": error });
+  } catch (error) {
+    console.error("Fast2SMS API error:", error);
     throw new Error("Fast2SMS API error.");
   }
 };

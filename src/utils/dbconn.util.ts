@@ -7,7 +7,7 @@ import { MONGO_URI } from "../config";
  * @throws {Error}
  * @description Connects to MongoDB using the MONGO_URI config variable.
  */
-async function dbConnect(): Promise<void> {
+export default async function dbConnect(): Promise<void> {
   try {
     console.log("Connecting to MongoDB...");
     mongoose.set("strictQuery", false);
@@ -30,5 +30,3 @@ async function dbConnect(): Promise<void> {
     throw error;
   }
 }
-
-export default dbConnect;
