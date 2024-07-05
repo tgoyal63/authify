@@ -12,7 +12,7 @@ import { getServicesOfDiscordGuild } from "../../../services/service.service";
 export default {
     data: new SlashCommandBuilder()
         .setName("create-mobile-button")
-        .setDescription("creates an otp for phone verificationg"),
+        .setDescription("creates an otp for phone verification"),
 
     async execute(interaction: ChatInputCommandInteraction) {
         const permissions = interaction.member
